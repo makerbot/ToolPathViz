@@ -84,6 +84,14 @@ bool layerMap::heightInLayer(int layer, float height) {
     return (std::fabs(heights[layer] - height) < .07);
 }
 
+bool layerMap::heightGreaterThanLayer(int layer, float height) {
+    return (!heightInLayer(layer, height) && height > heights[layer]);
+}
+
+bool layerMap::heightLessThanLayer(int layer, float height) {
+    return (!heightInLayer(layer, height) && height < heights[layer]);
+}
+
 // Record that we've seen a specific z height. If it's already in the list, it is ignored, otherwise it is added.
 void layerMap::recordHeight(float height) {
     for (int i = 0; i < heights.size(); i++) {

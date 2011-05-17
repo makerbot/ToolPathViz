@@ -66,6 +66,12 @@ public:
     // Test if a height is in a given layer
     bool heightInLayer(int layer, float height);
 
+    // Test if a height is higher than a given layer
+    bool heightGreaterThanLayer(int layer, float height);
+
+    // Test if a height is lower than a given later
+    bool heightLessThanLayer(int layer, float height);
+
     // Return the number of layers that we know about
     int size();
 
