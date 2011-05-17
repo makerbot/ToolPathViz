@@ -1,4 +1,5 @@
 #include "gcode.h"
+#include <cmath>
 
 char gcode::codes[] =  "ABDEFGHIJKLMPQRSTXYZ";
 
@@ -79,12 +80,44 @@ double gcode::getCodeValue(char searchCode) {
 }
 
 
+bool layerMap::heightInLayer(int layer, float height) {
+    return (std::fabs(heights[layer] - height) < .07);
+}
+
+// Record that we've seen a specific z height. If it's already in the list, it is ignored, otherwise it is added.
+void layerMap::recordHeight(float height) {
+    for (int i = 0; i < heights.size(); i++) {
+        if (heightInLayer(i, height)) {
+            return;
+        }
+    }
+    heights.push_back(height);
+}
+
+// Get the height corresponding to a given layer
+float layerMap::getLayerHeight(int layer) {
+    return heights.at(layer);
+}
+
+// Return the number of layers that we know about
+int layerMap::size() {
+    return heights.size();
+}
+
+// Clear the map out.
+void layerMap::clear() {
+    heights.clear();
+}
+
+
+
 gcodeModel::gcodeModel() {
 
 }
 
 void gcodeModel::loadGCode(string filename) {
     points.clear();
+    map.clear();
 
     ifstream file;
 
@@ -99,9 +132,13 @@ void gcodeModel::loadGCode(string filename) {
 
         //		cout << " hascodeG:" << code.hasCode('G') << std::endl;
 
-        // If the code contains a line, let's add it to our list.
+        // If the code contains a line
         if (code.hasCode('G') && (int)code.getCodeValue('G') == 1) {
+            // let's add it to our list.
             points.push_back(point(code.getCodeValue('X'), code.getCodeValue('Y'),code.getCodeValue('Z')));
+
+            // and also record its z-height so we can make a map of layers.
+            map.recordHeight(code.getCodeValue('Z'));
         }
     }
 }

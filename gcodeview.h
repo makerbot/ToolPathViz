@@ -28,6 +28,8 @@ public:
     void setupViewport(int width, int height);
     void resetView();
 
+    void setCurrentLayer(int layer);
+
 protected:
     void initializeGL();
     void resizeGL(int w, int h);
@@ -38,14 +40,17 @@ protected:
     void wheelEvent(QWheelEvent *event);
     void mouseDoubleClickEvent(QMouseEvent event);
 
-private:
+public:
     gcodeModel model;
+private:
     QPoint lastPos;
 
     float xRot;
     float yRot;
     float zRot;
     float scale;
+
+    int currentLayer;
 };
 
 #endif // GCODEVIEW_H

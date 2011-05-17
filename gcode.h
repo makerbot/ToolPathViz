@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <algorithm>
 
 using std::string;
 using std::vector;
@@ -50,6 +51,27 @@ public:
         double getCodeValue(char searchCode);
 };
 
+// stab at representing all of the layers in an object
+class layerMap {
+private:
+    // vector containing all of the layer heights we know about
+    vector<float> heights;
+public:
+    // Record that we've seen a specific z height. If it's already in the list, it is ignored, otherwise it is added.
+    void recordHeight(float height);
+
+    // Get the height corresponding to a given layer
+    float getLayerHeight(int layer);
+
+    // Test if a height is in a given layer
+    bool heightInLayer(int layer, float height);
+
+    // Return the number of layers that we know about
+    int size();
+
+    void clear();
+};
+
 // TODO: Use whatever the equivalent class here should be.
 struct point {
 public:
@@ -65,6 +87,7 @@ class gcodeModel {
 public:
     // For now, we have a long list of points to string together, that is public!
     vector<point> points;
+    layerMap map;
 
 public:
     gcodeModel();

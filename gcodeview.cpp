@@ -6,7 +6,6 @@
 #include <math.h>
 
 #import <iostream>
-using namespace std;
 
 static void qNormalizeAngle(int &angle)
 {
@@ -20,6 +19,8 @@ GcodeView::GcodeView(QWidget *parent)
     : QGLWidget(parent)
 {
     resetView();
+
+    currentLayer = 0;
 
     resizeGL(this->width(),this->height());
 }
@@ -126,8 +127,18 @@ void GcodeView::paintGL()
     for (unsigned int i = 1; i < model.points.size(); i++) {
             point a = model.points[i-1];
             point b = model.points[i];
+
+            // highlight a layer
+            if (model.map.heightInLayer(currentLayer, a.z)) {
+                glColor4f(1,0,1,1);
+            }
+
             glVertex3f(a.x, a.y, a.z); // origin of the line
             glVertex3f(b.x, b.y, b.z); // ending point of the line
+
+            if (model.map.heightInLayer(currentLayer, a.z)) {
+                glColor4f(1,1,1,.15);
+            }
     }
 
     glEnd( );
@@ -137,6 +148,7 @@ void GcodeView::paintGL()
 
 void GcodeView::loadModel(QString filename) {
     model.loadGCode(filename.toStdString());
+    resetView();
     updateGL();
 }
 
@@ -147,6 +159,7 @@ void GcodeView::mousePressEvent(QMouseEvent *event)
 
 void GcodeView::mouseMoveEvent(QMouseEvent *event)
 {
+
     int dx = event->x() - lastPos.x();
     int dy = event->y() - lastPos.y();
 
@@ -162,7 +175,7 @@ void GcodeView::mouseMoveEvent(QMouseEvent *event)
 
 void GcodeView::wheelEvent(QWheelEvent *event)
 {
-    float newScale = scale*(1 + event->delta()/100.0);
+    float newScale = scale*(1 + event->delta()/400.0);
 
  //   if (newScale > 0.01 && newScale < 2) {
         scale = newScale;
@@ -172,7 +185,19 @@ void GcodeView::wheelEvent(QWheelEvent *event)
 }
 
 void GcodeView::mouseDoubleClickEvent(QMouseEvent event) {
+    // TODO: We never get here.
     resetView();
     updateGL();
 }
 
+
+
+
+void GcodeView::setCurrentLayer(int layer) {
+    if (layer < model.map.size()) {
+        currentLayer = layer;
+        std::cout << "Current layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
+        updateGL();
+
+    }
+}

@@ -14,10 +14,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     gcode.cpp \
-    gcodeview.cpp
+    gcodeview.cpp \
+    gcodeviewapplication.cpp
 
 HEADERS  += mainwindow.h \
     gcode.h \
-    gcodeview.h
+    gcodeview.h \
+    gcodeviewapplication.h
 
 FORMS    += mainwindow.ui
