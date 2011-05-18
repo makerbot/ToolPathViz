@@ -5,6 +5,7 @@
 #include <QGLWidget>
 
 #include <gcode.h>
+#include <arcball.h>
 
 class GcodeView : public QGLWidget
 {
@@ -37,12 +38,16 @@ protected:
 
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+
     void wheelEvent(QWheelEvent *event);
     void mouseDoubleClickEvent(QMouseEvent event);
 
 public:
     gcodeModel model;
 private:
+    Arcball arcball;
+
     QPoint lastPos;
 
     float xRot;

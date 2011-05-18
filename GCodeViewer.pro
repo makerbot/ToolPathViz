@@ -15,11 +15,18 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     gcode.cpp \
     gcodeview.cpp \
-    gcodeviewapplication.cpp
+    gcodeviewapplication.cpp \
+    arcball.cpp \
+    quaternion.cpp \
+    algebra3.cpp
 
 HEADERS  += mainwindow.h \
     gcode.h \
     gcodeview.h \
-    gcodeviewapplication.h
+    gcodeviewapplication.h \
+    arcball.h \
+    algebra3.h \
+    quaternion.h \
+    glui_internal.h
 
 FORMS    += mainwindow.ui

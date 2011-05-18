@@ -86,12 +86,16 @@ void GcodeView::setupViewport(int width, int height)
 #else
     glOrtho(-0.5, +0.5, -0.5, 0.5, 4.0, 15.0);
 #endif
+    // TODO: delme
     glMatrixMode(GL_MODELVIEW);
 }
 
 void GcodeView::resizeGL(int width, int height)
 {
     setupViewport(width, height);
+
+    arcball.set_params( vec2( (float)(width / 2), (float)(height / 2)),
+                       (float) 2*height );
 }
 
 void GcodeView::paintGL()
@@ -116,9 +120,12 @@ void GcodeView::paintGL()
     glScalef(scale, scale, scale);
 
     glTranslatef(0.0, 0.0, model.getModelZCenter());
-    glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
-    glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
-    glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
+//    glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
+//    glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
+//    glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
+
+    mat4 tmp_rot = arcball.rot;
+    glMultMatrixf( (float*) &tmp_rot[0][0] );
     glTranslatef(0.0f, 0.0f,  -model.getModelZCenter());
 
     glLineWidth(2);
@@ -158,23 +165,31 @@ void GcodeView::loadModel(QString filename) {
 
 void GcodeView::mousePressEvent(QMouseEvent *event)
 {
-    lastPos = event->pos();
+    arcball.mouse_down(event->x(), height() - event->y());
+//    lastPos = event->pos();
 }
 
 void GcodeView::mouseMoveEvent(QMouseEvent *event)
 {
+    // TODO: send key states too?
+    arcball.mouse_motion(event->x(), height() - event->y());
+//    int dx = event->x() - lastPos.x();
+//    int dy = event->y() - lastPos.y();
 
-    int dx = event->x() - lastPos.x();
-    int dy = event->y() - lastPos.y();
+//    if (event->buttons() & Qt::LeftButton) {
+//        setXRotation(xRot + 1 * dy);
+//        setYRotation(yRot + 1 * dx);
+//    } else if (event->buttons() & Qt::RightButton) {
+//        setXRotation(xRot - 1 * dy);
+//        setYRotation(yRot - 1 * dx);
+//    }
+//    lastPos = event->pos();
 
-    if (event->buttons() & Qt::LeftButton) {
-        setXRotation(xRot + 1 * dy);
-        setYRotation(yRot + 1 * dx);
-    } else if (event->buttons() & Qt::RightButton) {
-        setXRotation(xRot - 1 * dy);
-        setYRotation(yRot - 1 * dx);
-    }
-    lastPos = event->pos();
+    updateGL();
+}
+
+void GcodeView::mouseReleaseEvent(QMouseEvent *event) {
+    arcball.mouse_up();
 }
 
 void GcodeView::wheelEvent(QWheelEvent *event)
@@ -193,14 +208,10 @@ void GcodeView::mouseDoubleClickEvent(QMouseEvent event) {
     updateGL();
 }
 
-
-
-
 void GcodeView::setCurrentLayer(int layer) {
     if (layer < model.map.size()) {
         currentLayer = layer;
         std::cout << "Current layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
         updateGL();
-
     }
 }
