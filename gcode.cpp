@@ -1,5 +1,6 @@
 #include "gcode.h"
 #include <cmath>
+#include <float.h>
 
 char gcode::codes[] =  "ABDEFGHIJKLMPQRSTXYZ";
 
@@ -120,7 +121,12 @@ void layerMap::clear() {
 
 
 gcodeModel::gcodeModel() {
+    minZ = FLT_MAX;
+    maxZ = FLT_MIN;
+}
 
+float gcodeModel::getModelZCenter() {
+    return (maxZ - minZ)/2 + minZ;
 }
 
 void gcodeModel::loadGCode(string filename) {
@@ -147,6 +153,14 @@ void gcodeModel::loadGCode(string filename) {
 
             // and also record its z-height so we can make a map of layers.
             map.recordHeight(code.getCodeValue('Z'));
+
+            // Also, check if it's lower than the lowest or higher than the highest...
+            if (code.getCodeValue('Z') < minZ) {
+                minZ = code.getCodeValue('Z');
+            }
+            if (code.getCodeValue('Z') > maxZ) {
+                maxZ = code.getCodeValue('Z');
+            }
         }
     }
 }

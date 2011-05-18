@@ -7,6 +7,7 @@
 
 #import <iostream>
 
+
 static void qNormalizeAngle(int &angle)
 {
     while (angle < 0)
@@ -104,22 +105,22 @@ void GcodeView::paintGL()
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glFrustum(-widthRatio, widthRatio, -1, 1, 10, 100);
-    glTranslatef(0.0f, 0.0f, -15.0f);
+    glTranslatef(0.0, 0.0, -15.0f);
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glViewport(0, 0, width(), height());
-
 
     glPushMatrix();
 
     glScalef(scale, scale, scale);
 
-//    glTranslatef(0.0, 0.0, -10.0);
+    glTranslatef(0.0, 0.0, model.getModelZCenter());
     glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
     glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
     glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
+    glTranslatef(0.0f, 0.0f,  -model.getModelZCenter());
 
-    glColor4f(1,1,1,.15);
     glLineWidth(2);
     glBegin(GL_LINE_STRIP);
 
@@ -128,17 +129,18 @@ void GcodeView::paintGL()
             point a = model.points[i-1];
             point b = model.points[i];
 
-            // highlight a layer
-            if (model.map.heightInLayer(currentLayer, a.z)) {
+            if (model.map.heightLessThanLayer(currentLayer, a.z)) {
+                glColor4f(0,1,1,.15);
+            }
+            else if (model.map.heightInLayer(currentLayer, a.z)) {
                 glColor4f(1,0,1,1);
+            }
+            else {
+                glColor4f(1,1,1,.01);
             }
 
             glVertex3f(a.x, a.y, a.z); // origin of the line
             glVertex3f(b.x, b.y, b.z); // ending point of the line
-
-            if (model.map.heightInLayer(currentLayer, a.z)) {
-                glColor4f(1,1,1,.15);
-            }
     }
 
     glEnd( );
@@ -149,6 +151,8 @@ void GcodeView::paintGL()
 void GcodeView::loadModel(QString filename) {
     model.loadGCode(filename.toStdString());
     resetView();
+
+
     updateGL();
 }
 
@@ -176,10 +180,9 @@ void GcodeView::mouseMoveEvent(QMouseEvent *event)
 void GcodeView::wheelEvent(QWheelEvent *event)
 {
     float newScale = scale*(1 + event->delta()/400.0);
-
- //   if (newScale > 0.01 && newScale < 2) {
-        scale = newScale;
- //   }
+    //   if (newScale > 0.01 && newScale < 2) {
+    scale = newScale;
+    //   }
 
     updateGL();
 }

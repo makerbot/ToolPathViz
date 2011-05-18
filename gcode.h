@@ -99,6 +99,12 @@ public:
     gcodeModel();
 
     void loadGCode(string filename);
+
+    float getModelZCenter();
+
+private:
+    float minZ;
+    float maxZ;
 };
 
 
