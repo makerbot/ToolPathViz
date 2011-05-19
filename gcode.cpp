@@ -31,6 +31,7 @@ void gcode::parseComments() {
 
 
 // Find any codes, and store them
+// TODO: write this correctly, handle upper/lower, spacing between code and numbers, error reporting, etc.
 void gcode::parseCodes() {
     // For each code letter we know about, scan for it and record it's value.
     int codeIndex = 0;
@@ -121,12 +122,10 @@ void layerMap::clear() {
 
 
 gcodeModel::gcodeModel() {
-    minZ = FLT_MAX;
-    maxZ = FLT_MIN;
 }
 
 float gcodeModel::getModelZCenter() {
-    return (maxZ - minZ)/2 + minZ;
+    return (zHeightBounds.getMax() - zHeightBounds.getMin())/2 + zHeightBounds.getMin();
 }
 
 void gcodeModel::loadGCode(string filename) {
@@ -138,6 +137,12 @@ void gcodeModel::loadGCode(string filename) {
     // TODO: error checking!
     file.open(filename.c_str());
 
+    float feedrate = FLT_MIN;
+    float flowrate = FLT_MIN;
+    float xPos = 0;
+    float yPos = 0;
+    float zPos = 0;
+
     while (file.good()) {
         string line;
 
@@ -146,21 +151,43 @@ void gcodeModel::loadGCode(string filename) {
 
         //		cout << " hascodeG:" << code.hasCode('G') << std::endl;
 
-        // If the code contains a line
-        if (code.hasCode('G') && (int)code.getCodeValue('G') == 1) {
+        // If the code contains a flowrate
+        if (code.hasCode('M') && (int)code.getCodeValue('M') == 108) {
+          if (code.hasCode('S')) {
+              flowrate = code.getCodeValue('S');
+              flowrateBounds.evaluate(flowrate);
+          }
+          else if (code.hasCode('R')) {
+              flowrate = code.getCodeValue('R');
+              flowrateBounds.evaluate(flowrate);
+          }
+          else {
+              // TODO
+          }
+        }
+        // If the code contains a movement
+        else if (code.hasCode('G') && (int)code.getCodeValue('G') == 1) {
+            // Pull coordinates out of it. This is not to spec (i think any time these are present, they mean go here)
+            // but we need to just define a standard and stick to it. The standard is in the form of an imaginary test suite.
+            if (code.hasCode('X')) {
+                xPos = code.getCodeValue('X');
+            }
+            if (code.hasCode('Y')) {
+                yPos = code.getCodeValue('Y');
+            }
+            if (code.hasCode('Z')) {
+                zPos = code.getCodeValue('Z');
+                zHeightBounds.evaluate(zPos);
+
+                map.recordHeight(zPos);
+            }
+            if (code.hasCode('F')) {
+                feedrate = code.getCodeValue('F');
+                feedrateBounds.evaluate(feedrate);
+            }
+
             // let's add it to our list.
-            points.push_back(point(code.getCodeValue('X'), code.getCodeValue('Y'),code.getCodeValue('Z')));
-
-            // and also record its z-height so we can make a map of layers.
-            map.recordHeight(code.getCodeValue('Z'));
-
-            // Also, check if it's lower than the lowest or higher than the highest...
-            if (code.getCodeValue('Z') < minZ) {
-                minZ = code.getCodeValue('Z');
-            }
-            if (code.getCodeValue('Z') > maxZ) {
-                maxZ = code.getCodeValue('Z');
-            }
+            points.push_back(point(xPos, yPos, zPos, feedrate,flowrate));
         }
     }
 }

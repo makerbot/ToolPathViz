@@ -78,15 +78,53 @@ public:
     void clear();
 };
 
+template <class T>
+class minMax {
+private:
+    T min;
+    T max;
+    bool initialized;
+public:
+    minMax() : initialized(false) {}
+    void evaluate(T dataPoint) {
+        if (!initialized) {
+            initialized = true;
+            min = dataPoint;
+            max = dataPoint;
+        }
+        else {
+            if (dataPoint < min) {
+                min = dataPoint;
+            }
+            if (dataPoint > max) {
+                max = dataPoint;
+            }
+        }
+    }
+    T getMin () { return min; }
+    T getMax () { return max; }
+};
+
+
+
 // TODO: Use whatever the equivalent class here should be.
+// TODO: This is also unravelling the state machine into individual events- maybe it's overkill? Is there a better model?
 struct point {
 public:
+    // Destination of this instruction
     float x;
     float y;
     float z;
 
-    point(float x, float y, float z) : x(x), y(y), z(z) {}
+    // Feedrate of this instruction
+    float feedrate;
+    // Flowrate of this instruction
+    float flowrate;
+
+    point(float x, float y, float z, float feedrate, float flowrate) : x(x), y(y), z(z), feedrate(feedrate), flowrate(flowrate) {}
 };
+
+
 
 // Object that can open a file containing GCode and turn it into a series of lines
 class gcodeModel {
@@ -94,6 +132,9 @@ public:
     // For now, we have a long list of points to string together, that is public!
     vector<point> points;
     layerMap map;
+    minMax<float> feedrateBounds;
+    minMax<float> flowrateBounds;
+    minMax<float> zHeightBounds;
 
 public:
     gcodeModel();
@@ -101,10 +142,6 @@ public:
     void loadGCode(string filename);
 
     float getModelZCenter();
-
-private:
-    float minZ;
-    float maxZ;
 };
 
 

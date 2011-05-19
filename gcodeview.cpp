@@ -5,7 +5,7 @@
 
 #include <math.h>
 
-#import <iostream>
+#include <iostream>
 
 
 static void qNormalizeAngle(int &angle)
@@ -20,47 +20,12 @@ GcodeView::GcodeView(QWidget *parent)
     : QGLWidget(parent)
 {
     resetView();
-
-    currentLayer = 0;
-
     resizeGL(this->width(),this->height());
 }
 
 void GcodeView::resetView() {
-    xRot = 0;
-    yRot = 0;
-    zRot = 0;
     scale = .1;
-}
-
-void GcodeView::setXRotation(int angle)
-{
-    qNormalizeAngle(angle);
-    if (angle != xRot) {
-        xRot = angle;
-        emit xRotationChanged(angle);
-        updateGL();
-    }
-}
-
-void GcodeView::setYRotation(int angle)
-{
-    qNormalizeAngle(angle);
-    if (angle != yRot) {
-        yRot = angle;
-        emit yRotationChanged(angle);
-        updateGL();
-    }
-}
-
-void GcodeView::setZRotation(int angle)
-{
-    qNormalizeAngle(angle);
-    if (angle != zRot) {
-        zRot = angle;
-        emit xRotationChanged(angle);
-        updateGL();
-    }
+    currentLayer = 0;
 }
 
 void GcodeView::initializeGL()
@@ -78,16 +43,6 @@ void GcodeView::setupViewport(int width, int height)
 {
     int side = qMin(width, height);
     glViewport((width - side) / 2, (height - side) / 2, side, side);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-#ifdef QT_OPENGL_ES
-    glOrthof(-0.5, +0.5, -0.5, 0.5, 4.0, 15.0);
-#else
-    glOrtho(-0.5, +0.5, -0.5, 0.5, 4.0, 15.0);
-#endif
-    // TODO: delme
-    glMatrixMode(GL_MODELVIEW);
 }
 
 void GcodeView::resizeGL(int width, int height)
@@ -120,9 +75,6 @@ void GcodeView::paintGL()
     glScalef(scale, scale, scale);
 
     glTranslatef(0.0, 0.0, model.getModelZCenter());
-//    glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
-//    glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
-//    glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
 
     mat4 tmp_rot = arcball.rot;
     glMultMatrixf( (float*) &tmp_rot[0][0] );
@@ -136,15 +88,23 @@ void GcodeView::paintGL()
             point a = model.points[i-1];
             point b = model.points[i];
 
+            float alpha = 0;
+
             if (model.map.heightLessThanLayer(currentLayer, a.z)) {
-                glColor4f(0,1,1,.15);
+                alpha = .20;
             }
             else if (model.map.heightInLayer(currentLayer, a.z)) {
-                glColor4f(1,0,1,1);
+                alpha = 1;
             }
             else {
-                glColor4f(1,1,1,.01);
+                alpha = .02;
             }
+
+            // scale the feedrate to the bounds of what this job contains;
+            float val = (b.feedrate - model.feedrateBounds.getMin())/(model.feedrateBounds.getMax() - model.feedrateBounds.getMin());
+//            float val = (b.flowrate - model.flowrateBounds.getMin())/(model.flowrateBounds.getMax() - model.flowrateBounds.getMin());
+
+            glColor4f(val,1-val,0,alpha);
 
             glVertex3f(a.x, a.y, a.z); // origin of the line
             glVertex3f(b.x, b.y, b.z); // ending point of the line
@@ -158,8 +118,6 @@ void GcodeView::paintGL()
 void GcodeView::loadModel(QString filename) {
     model.loadGCode(filename.toStdString());
     resetView();
-
-
     updateGL();
 }
 
@@ -173,17 +131,6 @@ void GcodeView::mouseMoveEvent(QMouseEvent *event)
 {
     // TODO: send key states too?
     arcball.mouse_motion(event->x(), height() - event->y());
-//    int dx = event->x() - lastPos.x();
-//    int dy = event->y() - lastPos.y();
-
-//    if (event->buttons() & Qt::LeftButton) {
-//        setXRotation(xRot + 1 * dy);
-//        setYRotation(yRot + 1 * dx);
-//    } else if (event->buttons() & Qt::RightButton) {
-//        setXRotation(xRot - 1 * dy);
-//        setYRotation(yRot - 1 * dx);
-//    }
-//    lastPos = event->pos();
 
     updateGL();
 }
@@ -195,9 +142,7 @@ void GcodeView::mouseReleaseEvent(QMouseEvent *event) {
 void GcodeView::wheelEvent(QWheelEvent *event)
 {
     float newScale = scale*(1 + event->delta()/400.0);
-    //   if (newScale > 0.01 && newScale < 2) {
     scale = newScale;
-    //   }
 
     updateGL();
 }
