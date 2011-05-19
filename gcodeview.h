@@ -19,6 +19,8 @@ public:
 
     void loadModel(QString filename);
 
+    bool hasModel();
+
     void setupViewport(int width, int height);
     void resetView();
 

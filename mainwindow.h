@@ -18,6 +18,9 @@ public:
     // Load a file with the given name
     void loadFile(const QString &fileName);
 
+    // TODO: delme?
+    bool hasFile();
+
     void updateWindowMenu();
 private slots:
     void on_actionLoad_GCode_triggered();

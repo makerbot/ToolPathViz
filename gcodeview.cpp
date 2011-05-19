@@ -122,8 +122,8 @@ void GcodeView::paintGL()
             }
 
             // scale the feedrate to the bounds of what this job contains;
-            float val = (b.feedrate - model.feedrateBounds.getMin())/(model.feedrateBounds.getMax() - model.feedrateBounds.getMin());
-//            float val = (b.flowrate - model.flowrateBounds.getMin())/(model.flowrateBounds.getMax() - model.flowrateBounds.getMin());
+//            float val = (b.feedrate - model.feedrateBounds.getMin())/(model.feedrateBounds.getMax() - model.feedrateBounds.getMin());
+            float val = (b.flowrate - model.flowrateBounds.getMin())/(model.flowrateBounds.getMax() - model.flowrateBounds.getMin());
 
             glColor4f(val,1-val,0,alpha);
 
@@ -140,6 +140,10 @@ void GcodeView::loadModel(QString filename) {
     model.loadGCode(filename.toStdString());
     resetView();
     updateGL();
+}
+
+bool GcodeView::hasModel() {
+    return !(model.points.empty());
 }
 
 void GcodeView::mousePressEvent(QMouseEvent *event)

@@ -146,6 +146,10 @@ void MainWindow::loadFile(const QString &fileName) {
     ui->LayerHeight->setMaximum(ui->graphicsView->model.map.size());
 }
 
+bool MainWindow::hasFile() {
+    return ui->graphicsView->hasModel();
+}
+
 void MainWindow::on_LayerHeight_sliderMoved(int position)
 {
     // TODO: where /should/ this signal go?
