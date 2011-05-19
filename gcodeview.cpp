@@ -16,16 +16,37 @@ static void qNormalizeAngle(int &angle)
         angle -= 360 * 16;
 }
 
-GcodeView::GcodeView(QWidget *parent)
-    : QGLWidget(parent)
+GcodeView::GcodeView(QWidget *parent) :
+    QGLWidget(parent)
 {
     resetView();
     resizeGL(this->width(),this->height());
+
+    animationTimer = new QTimer(this);
+    connect(animationTimer, SIGNAL(timeout()), this, SLOT(animationUpdate()));
+
+    arcball.set_damping(.05);
+}
+
+// TODO: This is very likely not thread safe, and this is probably detrimental to the event timer approach.
+void GcodeView::animationUpdate() {
+    if (arcball.is_spinning) {
+        std::cout << "here!" << std::endl;
+        arcball.idle();
+        *arcball.rot_ptr = *arcball.rot_ptr * arcball.rot_increment;
+        updateGL();
+
+        if (!arcball.is_spinning) {
+            animationTimer->stop();
+        }
+    }
 }
 
 void GcodeView::resetView() {
     scale = .1;
     currentLayer = 0;
+
+    // TODO: reset arcball
 }
 
 void GcodeView::initializeGL()
@@ -133,10 +154,17 @@ void GcodeView::mouseMoveEvent(QMouseEvent *event)
     arcball.mouse_motion(event->x(), height() - event->y());
 
     updateGL();
+
+
 }
 
 void GcodeView::mouseReleaseEvent(QMouseEvent *event) {
     arcball.mouse_up();
+
+    // Start an animation timer if the arcball is still spinning
+    if (arcball.is_spinning) {
+        animationTimer->start(10); // 30fps?
+    }
 }
 
 void GcodeView::wheelEvent(QWheelEvent *event)

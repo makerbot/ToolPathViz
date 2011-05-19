@@ -11,6 +11,9 @@ class GcodeView : public QGLWidget
 {
     Q_OBJECT        // must include this if you use Qt signals/slots
 
+public slots:
+    void animationUpdate();
+
 public:
     GcodeView(QWidget *parent);
 
@@ -37,6 +40,9 @@ public:
     gcodeModel model;
 private:
     Arcball arcball;
+
+    // TODO: Must this be dynamic?
+    QTimer* animationTimer;
 
     float scale;
 
