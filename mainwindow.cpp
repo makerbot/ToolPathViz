@@ -112,6 +112,7 @@ void MainWindow::updateWindowMenu()
                 QAction* action = new QAction(this);
                 action->setText(mainWin->windowTitle());
                 windowMenu->addAction(action);
+ //               windowMenu->addAction(recentFileActs[i]);
             }
         }
     }

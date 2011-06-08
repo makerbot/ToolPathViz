@@ -116,12 +116,16 @@ public:
     float y;
     float z;
 
+    // true if the toolhead is on during this move
+    bool toolEnabled;
+
     // Feedrate of this instruction
     float feedrate;
     // Flowrate of this instruction
     float flowrate;
 
-    point(float x, float y, float z, float feedrate, float flowrate) : x(x), y(y), z(z), feedrate(feedrate), flowrate(flowrate) {}
+    point(float x, float y, float z, float feedrate, bool toolEnabled, float flowrate) :
+        x(x), y(y), z(z), feedrate(feedrate), toolEnabled(toolEnabled), flowrate(flowrate) {}
 };
 
 

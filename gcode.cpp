@@ -143,6 +143,8 @@ void gcodeModel::loadGCode(string filename) {
     float yPos = 0;
     float zPos = 0;
 
+    bool toolEnabled = false;
+
     while (file.good()) {
         string line;
 
@@ -152,7 +154,16 @@ void gcodeModel::loadGCode(string filename) {
         //		cout << " hascodeG:" << code.hasCode('G') << std::endl;
 
         // If the code contains a flowrate
-        if (code.hasCode('M') && (int)code.getCodeValue('M') == 108) {
+        if (code.hasCode('M') && (int)code.getCodeValue('M') == 101) {
+            toolEnabled = true;
+        }
+        else if (code.hasCode('M') && (int)code.getCodeValue('M') == 102) {
+            toolEnabled = true;
+        }
+        else if (code.hasCode('M') && (int)code.getCodeValue('M') == 103) {
+            toolEnabled = false;
+        }
+        else if (code.hasCode('M') && (int)code.getCodeValue('M') == 108) {
           if (code.hasCode('S')) {
               flowrate = code.getCodeValue('S');
               flowrateBounds.evaluate(flowrate);
@@ -187,7 +198,7 @@ void gcodeModel::loadGCode(string filename) {
             }
 
             // let's add it to our list.
-            points.push_back(point(xPos, yPos, zPos, feedrate,flowrate));
+            points.push_back(point(xPos, yPos, zPos, feedrate, toolEnabled, flowrate));
         }
     }
 }

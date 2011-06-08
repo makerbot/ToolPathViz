@@ -111,21 +111,26 @@ void GcodeView::paintGL()
 
             float alpha = 0;
 
-            if (model.map.heightLessThanLayer(currentLayer, a.z)) {
+            if (model.map.heightLessThanLayer(currentLayer, b.z)) {
                 alpha = .20;
             }
-            else if (model.map.heightInLayer(currentLayer, a.z)) {
+            else if (model.map.heightInLayer(currentLayer, b.z)) {
                 alpha = 1;
             }
             else {
                 alpha = .02;
             }
 
+
             // scale the feedrate to the bounds of what this job contains;
 //            float val = (b.feedrate - model.feedrateBounds.getMin())/(model.feedrateBounds.getMax() - model.feedrateBounds.getMin());
             float val = (b.flowrate - model.flowrateBounds.getMin())/(model.flowrateBounds.getMax() - model.flowrateBounds.getMin());
 
             glColor4f(val,1-val,0,alpha);
+
+            if (!b.toolEnabled) {
+                glColor4f(0,0,255,alpha);
+            }
 
             glVertex3f(a.x, a.y, a.z); // origin of the line
             glVertex3f(b.x, b.y, b.z); // ending point of the line
