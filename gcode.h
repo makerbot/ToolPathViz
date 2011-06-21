@@ -5,6 +5,7 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
+#include <QString>
 
 using std::string;
 using std::vector;
@@ -143,8 +144,8 @@ public:
 public:
     gcodeModel();
 
-    void loadGCode(string filename);
-
+    void loadGCode(QString filename);
+    void exportGCode(QString filename);
     float getModelZCenter();
 };
 

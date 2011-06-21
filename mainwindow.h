@@ -30,6 +30,8 @@ private slots:
     void openRecentFile();
     void on_actionClose_triggered();
 
+    void on_actionExport_Gcode_File_triggered();
+
 private:
     Ui::MainWindow *ui;
 

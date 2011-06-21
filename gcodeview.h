@@ -18,7 +18,7 @@ public:
     GcodeView(QWidget *parent);
 
     void loadModel(QString filename);
-
+    void exportModel (QString filename);
     bool hasModel();
 
     void setupViewport(int width, int height);

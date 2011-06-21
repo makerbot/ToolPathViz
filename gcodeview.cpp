@@ -142,9 +142,13 @@ void GcodeView::paintGL()
 }
 
 void GcodeView::loadModel(QString filename) {
-    model.loadGCode(filename.toStdString());
+    model.loadGCode(filename);
     resetView();
     updateGL();
+}
+
+void GcodeView::exportModel(QString filename) {
+    model.exportGCode(filename);
 }
 
 bool GcodeView::hasModel() {

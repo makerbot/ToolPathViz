@@ -166,3 +166,10 @@ void MainWindow::on_actionClose_triggered()
 
     // TODO: Can the application get a signal when this happens, instead of sending it explicitly here?
 }
+
+void MainWindow::on_actionExport_Gcode_File_triggered()
+{
+    QString filename = QFileDialog::getSaveFileName(this, tr("Export GCode"), QDir::currentPath(),  tr("GCode File (*.gcode)"));
+    ui->graphicsView->exportModel(filename);
+
+}
