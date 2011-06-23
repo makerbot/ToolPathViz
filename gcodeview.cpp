@@ -108,13 +108,8 @@ void GcodeView::paintGL()
 
 
     for (unsigned int i = 1; i < model.points.size(); i++) {
-
-        //Checks to ensure we're only generating a model for non-string lines
-        point data = model.points.at(i);
-        if(data.etc.compare("") == 0){
             point a = model.points[i-1];
             point b = model.points[i];
-            //TODO: Fix i-1 issue.
 
             float alpha = 0;
 
@@ -141,7 +136,6 @@ void GcodeView::paintGL()
 
             glVertex3f(a.x, a.y, a.z); // origin of the line
             glVertex3f(b.x, b.y, b.z); // ending point of the line
-        }
     }
 
     glEnd( );

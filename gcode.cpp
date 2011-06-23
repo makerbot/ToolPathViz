@@ -145,11 +145,6 @@ void gcodeModel::exportGCode(QString filename) {
     {
         point data = points.at(i);
 
-        if(data.etc.compare("") != 0){
-            out << data.etc.c_str();
-            out << "\n";
-        }
-        else{
             if (data.flowrate != lastflowrate){
                 out << "M108 R";
                 out << data.flowrate;
@@ -175,7 +170,6 @@ void gcodeModel::exportGCode(QString filename) {
             out << "\n";
 
             lastflowrate = data.flowrate;
-        }
 
 
     }
@@ -211,15 +205,13 @@ void gcodeModel::loadGCode(QString filename) {
         // If the code contains a flowrate
         if (code.hasCode('M') && (int)code.getCodeValue('M') == 101) {
             toolEnabled = true;
-            //points.push_back(point(line));
         }
         else if (code.hasCode('M') && (int)code.getCodeValue('M') == 102) {
             toolEnabled = true;
-            //points.push_back(point(line));
         }
         else if (code.hasCode('M') && (int)code.getCodeValue('M') == 103) {
             toolEnabled = false;
-            //points.push_back(point(line));
+
         }
         else if (code.hasCode('M') && (int)code.getCodeValue('M') == 108) {
           if (code.hasCode('S')) {
@@ -233,7 +225,6 @@ void gcodeModel::loadGCode(QString filename) {
           else {
               // TODO
           }
-          //points.push_back(point(line));
         }
         // If the code contains a movement
         else if (code.hasCode('G') && (int)code.getCodeValue('G') == 1) {
@@ -259,9 +250,5 @@ void gcodeModel::loadGCode(QString filename) {
             points.push_back(point(xPos, yPos, zPos, feedrate, toolEnabled, flowrate));
         }
 
-        //Save the string
-        else{
-            //points.push_back(point(line));
-        }
     }
 }

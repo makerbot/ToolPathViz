@@ -128,9 +128,6 @@ public:
     point(float x, float y, float z, float feedrate, bool toolEnabled, float flowrate) :
         x(x), y(y), z(z), feedrate(feedrate), toolEnabled(toolEnabled), flowrate(flowrate) {}
 
-    //This string can hold extraneous lines that we don't need to parse out
-    string etc;
-    point(string etc) : etc(etc) {}
 
 };
 
