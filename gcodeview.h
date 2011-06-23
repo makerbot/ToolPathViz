@@ -23,7 +23,9 @@ public:
 
     void setupViewport(int width, int height);
     void resetView();
-
+    void zoom(float amount);
+    void panX(float amount);
+    void panY(float amount);
     void setCurrentLayer(int layer);
 
 protected:
@@ -47,7 +49,8 @@ private:
     QTimer* animationTimer;
 
     float scale;
-
+    float pan_x;
+    float pan_y;
     int currentLayer;
 };
 

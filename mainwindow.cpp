@@ -11,6 +11,7 @@
 #include <iostream>
 
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -159,6 +160,17 @@ void MainWindow::on_LayerHeight_sliderMoved(int position)
     // display the current layer height.
 }
 
+
+void MainWindow::on_zoomIn_clicked()
+{
+    ui->graphicsView->zoom(1.1);
+}
+
+void MainWindow::on_zoomOut_clicked()
+{
+    ui->graphicsView->zoom(.9);
+}
+
 void MainWindow::on_actionClose_triggered()
 {
     // Close this window.
@@ -172,4 +184,26 @@ void MainWindow::on_actionExport_Gcode_File_triggered()
     QString filename = QFileDialog::getSaveFileName(this, tr("Export GCode"), QDir::currentPath(),  tr("GCode File (*.gcode)"));
     ui->graphicsView->exportModel(filename);
 
+}
+
+
+
+void MainWindow::on_panLeft_clicked()
+{
+    ui->graphicsView->panX(1.0);
+}
+
+void MainWindow::on_panRight_clicked()
+{
+    ui->graphicsView->panX(-1.0);
+}
+
+void MainWindow::on_panUp_clicked()
+{
+    ui->graphicsView->panY(-1.0);
+}
+
+void MainWindow::on_panDown_clicked()
+{
+    ui->graphicsView->panY(1.0);
 }

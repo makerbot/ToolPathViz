@@ -32,6 +32,17 @@ private slots:
 
     void on_actionExport_Gcode_File_triggered();
 
+    void on_zoomIn_clicked();
+    void on_zoomOut_clicked();
+
+    void on_panLeft_clicked();
+
+    void on_panRight_clicked();
+
+    void on_panUp_clicked();
+
+    void on_panDown_clicked();
+
 private:
     Ui::MainWindow *ui;
 

@@ -44,6 +44,8 @@ void GcodeView::animationUpdate() {
 
 void GcodeView::resetView() {
     scale = .1;
+    pan_x = 0.0;
+    pan_y = 0.0;
     currentLayer = 0;
 
     // TODO: reset arcball
@@ -95,7 +97,7 @@ void GcodeView::paintGL()
 
     glScalef(scale, scale, scale);
 
-    glTranslatef(0.0, 0.0, model.getModelZCenter());
+    glTranslatef(pan_x, pan_y, model.getModelZCenter());
 
     mat4 tmp_rot = arcball.rot;
     glMultMatrixf( (float*) &tmp_rot[0][0] );
@@ -106,8 +108,13 @@ void GcodeView::paintGL()
 
 
     for (unsigned int i = 1; i < model.points.size(); i++) {
+
+        //Checks to ensure we're only generating a model for non-string lines
+        point data = model.points.at(i);
+        if(data.etc.compare("") == 0){
             point a = model.points[i-1];
             point b = model.points[i];
+            //TODO: Fix i-1 issue.
 
             float alpha = 0;
 
@@ -134,6 +141,7 @@ void GcodeView::paintGL()
 
             glVertex3f(a.x, a.y, a.z); // origin of the line
             glVertex3f(b.x, b.y, b.z); // ending point of the line
+        }
     }
 
     glEnd( );
@@ -185,6 +193,22 @@ void GcodeView::wheelEvent(QWheelEvent *event)
     float newScale = scale*(1 + event->delta()/400.0);
     scale = newScale;
 
+    updateGL();
+}
+
+
+void GcodeView::zoom(float amount){
+    scale = scale * amount;
+    updateGL();
+}
+
+void GcodeView::panX(float amount){
+    pan_x = pan_x + amount;
+    updateGL();
+}
+
+void GcodeView::panY(float amount){
+    pan_y = pan_y + amount;
     updateGL();
 }
 
