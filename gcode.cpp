@@ -1,8 +1,8 @@
 #include "gcode.h"
 #include <cmath>
 #include <float.h>
-#include <Qfile.h>
-#include <QTextStream.h>
+#include <QFile>
+#include <QTextStream>
 
 char gcode::codes[] =  "ABDEFGHIJKLMPQRSTXYZ";
 
