@@ -1170,16 +1170,16 @@ void mat3::print(FILE *file, const char *name) const
 {
     int i, j;
 
-    fprintf( stderr, "%s:\n", name );
+    fprintf( file, "%s:\n", name );
 
     for( i = 0; i < 3; i++ )
     {
-        fprintf( stderr, "   " );
+        fprintf( file, "   " );
         for( j = 0; j < 3; j++ )
         {
-            fprintf( stderr, "%f  ", v[i][j] );
+            fprintf( file, "%f  ", v[i][j] );
         }
-        fprintf( stderr, "\n" );
+        fprintf( file, "\n" );
     }
 }
 
@@ -1350,16 +1350,16 @@ void mat4::print(FILE *file, const char *name) const
 {
     int i, j;
 
-    fprintf( stderr, "%s:\n", name );
+    fprintf( file, "%s:\n", name );
 
     for( i = 0; i < 4; i++ )
     {
-        fprintf( stderr, "   " );
+        fprintf( file, "   " );
         for( j = 0; j < 4; j++ )
         {
-            fprintf( stderr, "%f  ", v[i][j] );
+            fprintf( file, "%f  ", v[i][j] );
         }
-        fprintf( stderr, "\n" );
+        fprintf( file, "\n" );
     }
 }
 

@@ -126,7 +126,7 @@ public:
     float flowrate;
 
     point(float x, float y, float z, float feedrate, bool toolEnabled, float flowrate) :
-        x(x), y(y), z(z), feedrate(feedrate), toolEnabled(toolEnabled), flowrate(flowrate) {}
+        x(x), y(y), z(z), toolEnabled(toolEnabled), feedrate(feedrate), flowrate(flowrate) {}
 
 
 };
