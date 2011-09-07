@@ -1,0 +1,5 @@
+*.o
+Makefile
+moc_*
+ui_*
+GCodeViewer
