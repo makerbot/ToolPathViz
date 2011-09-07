@@ -1,7 +1,7 @@
 #include "gcodeviewapplication.h"
 #include "mainwindow.h"
 
-GCodeViewApplication::GCodeViewApplication(int argc, char *argv[]) :
+GCodeViewApplication::GCodeViewApplication(int& argc, char *argv[]) :
     QApplication(argc, argv)
 {
     setOrganizationName("MakerBot Industries");
