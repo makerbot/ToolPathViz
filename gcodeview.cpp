@@ -101,44 +101,19 @@ void GcodeView::paintGL()
 
     mat4 tmp_rot = arcball.rot;
     glMultMatrixf( (float*) &tmp_rot[0][0] );
-    glTranslatef(0.0f, 0.0f,  -model.getModelZCenter());
+    glTranslatef(0.0f, 0.0f, -model.getModelZCenter());
 
     glLineWidth(2);
-    glBegin(GL_LINE_STRIP);
 
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
 
-    for (unsigned int i = 1; i < model.points.size(); i++) {
-            point a = model.points[i-1];
-            point b = model.points[i];
+    glVertexPointer(3, GL_FLOAT, sizeof(GLVertex), &model.vertexes[0].x);
+    glColorPointer(4, GL_FLOAT, sizeof(GLVertex), &model.vertexes[0].r);
+    glDrawArrays(GL_LINE_STRIP, 0, model.vertexes.size());
 
-            float alpha = 0;
-
-            if (model.map.heightLessThanLayer(currentLayer, b.z)) {
-                alpha = .20;
-            }
-            else if (model.map.heightInLayer(currentLayer, b.z)) {
-                alpha = 1;
-            }
-            else {
-                alpha = .02;
-            }
-
-
-            // scale the feedrate to the bounds of what this job contains;
-//            float val = (b.feedrate - model.feedrateBounds.getMin())/(model.feedrateBounds.getMax() - model.feedrateBounds.getMin());
-            float val = (b.flowrate - model.flowrateBounds.getMin())/(model.flowrateBounds.getMax() - model.flowrateBounds.getMin());
-
-            glColor4f(val,1-val,0,alpha);
-
-            if (!b.toolEnabled) {
-                glColor4f(0,0,255,alpha);
-            }
-
-            glVertex3f(a.x, a.y, a.z); // origin of the line
-            glVertex3f(b.x, b.y, b.z); // ending point of the line
-    }
-
-    glEnd( );
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
 
     glPopMatrix();
 }
@@ -216,6 +191,7 @@ void GcodeView::setCurrentLayer(int layer) {
     if (layer < model.map.size()) {
         currentLayer = layer;
         std::cout << "Current layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
+        model.refreshVertexes(currentLayer);
         updateGL();
     }
 }

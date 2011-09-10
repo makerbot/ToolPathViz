@@ -251,4 +251,46 @@ void gcodeModel::loadGCode(QString filename) {
         }
 
     }
+
+    refreshVertexes(0);
+}
+
+void gcodeModel::refreshVertexes(int currentLayer) {
+    vertexes.resize(points.size());
+
+    for(unsigned int i = 0; i < points.size(); i++) {
+        const point& pt = points[i];
+        GLVertex& vert = vertexes[i];
+
+        // set position
+        vert.x = pt.x;
+        vert.y = pt.y;
+        vert.z = pt.z;
+        vert.w = 0;
+
+        // base alpha on current layer
+        float alpha = .02;
+        if (map.heightLessThanLayer(currentLayer, pt.z)) {
+            alpha = .20;
+        }
+        else if (map.heightInLayer(currentLayer, pt.z)) {
+            alpha = 1;
+        }
+
+        // scale the feedrate to the bounds of what this job contains;
+        float val = (pt.flowrate - flowrateBounds.getMin())/(flowrateBounds.getMax() - flowrateBounds.getMin());
+
+        // set color
+        vert.r = val;
+        vert.g = 1-val;
+        vert.b = 0;
+        vert.a = alpha;
+
+        if (!pt.toolEnabled) {
+            vert.r = 0;
+            vert.g = 0;
+            vert.b = 255;
+            vert.a = alpha;
+        }
+    }
 }

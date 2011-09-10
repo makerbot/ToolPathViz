@@ -132,6 +132,12 @@ public:
 };
 
 
+struct GLVertex
+{
+    float x, y, z, w;
+    float r, g, b, a;
+};
+
 
 // Object that can open a file containing GCode and turn it into a series of lines
 class gcodeModel {
@@ -143,12 +149,16 @@ public:
     minMax<float> flowrateBounds;
     minMax<float> zHeightBounds;
 
+    vector< GLVertex > vertexes;
+
 public:
     gcodeModel();
 
     void loadGCode(QString filename);
     void exportGCode(QString filename);
     float getModelZCenter();
+
+    void refreshVertexes(int currentLayer);
 };
 
 
