@@ -3,3 +3,4 @@ Makefile
 moc_*
 ui_*
 GCodeViewer
+*.pro.user
