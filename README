@@ -1,0 +1,6 @@
+# ToolPathVis
+ToolPathVis is a tool from MakerBot Industries for visualization of a toolpath in 3 dimensions. While this was build for 3d printing, it is useful for a lot of technologies and topics.
+
+To build this tool you will need to install QtCreator, and open the GCodeViewer.pro file as a QtCreator project.
+
+
