@@ -25,8 +25,6 @@ public:
 private slots:
     void on_actionLoad_GCode_triggered();
 
-    void on_LayerHeight_sliderMoved(int position);
-
     void openRecentFile();
     void on_actionClose_triggered();
 

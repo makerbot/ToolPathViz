@@ -229,11 +229,3 @@ void GcodeView::mouseDoubleClickEvent(QMouseEvent event) {
     resetView();
     updateGL();
 }
-
-void GcodeView::setCurrentLayer(int layer) {
-//    if (layer < model.map.size()) {
-//        currentLayer = layer;
-//        std::cout << "Current layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
-//        updateGL();
-//    }
-}

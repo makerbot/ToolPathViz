@@ -152,14 +152,6 @@ bool MainWindow::hasFile() {
     return ui->graphicsView->hasModel();
 }
 
-void MainWindow::on_LayerHeight_sliderMoved(int position)
-{
-    // TODO: where /should/ this signal go?
-    ui->graphicsView->setCurrentLayer(position);
-
-    // display the current layer height.
-}
-
 void MainWindow::on_actionClose_triggered()
 {
     // Close this window.
