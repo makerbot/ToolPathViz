@@ -7,6 +7,9 @@
 
 #include <iostream>
 
+#include <geometry.h>
+#include <commands.h>
+#include <parsers.h>
 
 static void qNormalizeAngle(int &angle)
 {
@@ -31,7 +34,7 @@ GcodeView::GcodeView(QWidget *parent) :
 // TODO: This is very likely not thread safe, and this is probably detrimental to the event timer approach.
 void GcodeView::animationUpdate() {
     if (arcball.is_spinning) {
-        std::cout << "here!" << std::endl;
+//        std::cout << "here!" << std::endl;
         arcball.idle();
         *arcball.rot_ptr = *arcball.rot_ptr * arcball.rot_increment;
         updateGL();
@@ -97,46 +100,55 @@ void GcodeView::paintGL()
 
     glScalef(scale, scale, scale);
 
-    glTranslatef(pan_x, pan_y, model.getModelZCenter());
+    glTranslatef(pan_x, pan_y, 0);// model.getModelZCenter());
 
     mat4 tmp_rot = arcball.rot;
     glMultMatrixf( (float*) &tmp_rot[0][0] );
-    glTranslatef(0.0f, 0.0f,  -model.getModelZCenter());
+//    glTranslatef(0.0f, 0.0f,  -model.getModelZCenter());
 
     glLineWidth(2);
     glBegin(GL_LINE_STRIP);
-
-
-    for (unsigned int i = 1; i < model.points.size(); i++) {
-            point a = model.points[i-1];
-            point b = model.points[i];
-
-            float alpha = 0;
-
-            if (model.map.heightLessThanLayer(currentLayer, b.z)) {
-                alpha = .20;
-            }
-            else if (model.map.heightInLayer(currentLayer, b.z)) {
-                alpha = 1;
-            }
-            else {
-                alpha = .02;
-            }
-
-
-            // scale the feedrate to the bounds of what this job contains;
-//            float val = (b.feedrate - model.feedrateBounds.getMin())/(model.feedrateBounds.getMax() - model.feedrateBounds.getMin());
-            float val = (b.flowrate - model.flowrateBounds.getMin())/(model.flowrateBounds.getMax() - model.flowrateBounds.getMin());
-
-            glColor4f(val,1-val,0,alpha);
-
-            if (!b.toolEnabled) {
-                glColor4f(0,0,255,alpha);
-            }
-
-            glVertex3f(a.x, a.y, a.z); // origin of the line
-            glVertex3f(b.x, b.y, b.z); // ending point of the line
+    std::cout<<"rendering..."<<vmodel.segments.size()<<" segments"<<std::endl;
+    glColor4f(1, 1, 1, .8);
+    for(std::vector<segment>::iterator it = vmodel.segments.begin(); it < vmodel.segments.end(); it++)
+    {
+        point5d a = (*it).from;
+        point5d b = (*it).to;
+        glVertex3f(a.x, a.y, a.z); // origin of the line
+        glVertex3f(b.x, b.y, b.z); // ending point of the line
     }
+
+//
+//    for (unsigned int i = 1; i < model.points.size(); i++) {
+//            point a = model.points[i-1];
+//            point b = model.points[i];
+//
+//            float alpha = 0;
+//
+//            if (model.map.heightLessThanLayer(currentLayer, b.z)) {
+//                alpha = .20;
+//            }
+//            else if (model.map.heightInLayer(currentLayer, b.z)) {
+//                alpha = 1;
+//            }
+//            else {
+//                alpha = .02;
+//            }
+//
+//
+//            // scale the feedrate to the bounds of what this job contains;
+////            float val = (b.feedrate - model.feedrateBounds.getMin())/(model.feedrateBounds.getMax() - model.feedrateBounds.getMin());
+//            float val = (b.flowrate - model.flowrateBounds.getMin())/(model.flowrateBounds.getMax() - model.flowrateBounds.getMin());
+//
+//            glColor4f(val,1-val,0,alpha);
+//
+//            if (!b.toolEnabled) {
+//                glColor4f(0,0,255,alpha);
+//            }
+//
+//            glVertex3f(a.x, a.y, a.z); // origin of the line
+//            glVertex3f(b.x, b.y, b.z); // ending point of the line
+//    }
 
     glEnd( );
 
@@ -144,17 +156,23 @@ void GcodeView::paintGL()
 }
 
 void GcodeView::loadModel(QString filename) {
-    model.loadGCode(filename);
+//    model.loadGCode(filename);
+    std::cout<<"loading..."<<std::endl;
+    model.loadFile(filename);
+    std::cout<<"loaded"<<std::endl;
+    parsers::simpleLocationParser(model.lines);
+    std::cout<<"parsed"<<std::endl;
+    visualizers::simpleVisualizer(model.lines, vmodel);
     resetView();
     updateGL();
 }
 
 void GcodeView::exportModel(QString filename) {
-    model.exportGCode(filename);
+//    model.exportGCode(filename);
 }
 
 bool GcodeView::hasModel() {
-    return !(model.points.empty());
+    return model.loaded;
 }
 
 void GcodeView::mousePressEvent(QMouseEvent *event)
@@ -213,9 +231,9 @@ void GcodeView::mouseDoubleClickEvent(QMouseEvent event) {
 }
 
 void GcodeView::setCurrentLayer(int layer) {
-    if (layer < model.map.size()) {
-        currentLayer = layer;
-        std::cout << "Current layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
-        updateGL();
-    }
+//    if (layer < model.map.size()) {
+//        currentLayer = layer;
+//        std::cout << "Current layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
+//        updateGL();
+//    }
 }

@@ -46,10 +46,10 @@ private:
 public:
         gcode(string command);
 
-        string getCommand();
-        string getComment();
-        bool hasCode(char searchCode);
-        double getCodeValue(char searchCode);
+        const string getCommand() const;
+        const string getComment() const;
+        bool hasCode(char searchCode) const;
+        double getCodeValue(char searchCode) const;
 };
 
 // stab at representing all of the layers in an object

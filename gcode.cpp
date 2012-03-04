@@ -1,6 +1,7 @@
 #include "gcode.h"
 #include <cmath>
 #include <float.h>
+#include <iostream>
 #include <QFile>
 #include <QTextStream>
 
@@ -45,35 +46,39 @@ void gcode::parseCodes() {
 
             //			cout << " code=" << codes[codeIndex] << " value=" << value << std::endl;
             parameters.push_back(gCodeParameter(codes[codeIndex],value));
+
+//            std::cout << "parsed: " << codes[codeIndex] << " " << value << '\n';
         }
         codeIndex++;
     }
+
+    std::cout << " " << parameters.size() << " parameters parsed \n ";
 }
 
 
-string gcode::getCommand() {
+const string gcode::getCommand() const {
     // TODO: Note that this is the command minus any comments.
     return string(command);
 }
 
 
-string gcode::getComment() {
+const string gcode::getComment() const {
     return string(comment);
 }
 
-
-bool gcode::hasCode(char searchCode) {
-    for (unsigned int i = 0; i < parameters.size(); i++) {
+bool gcode::hasCode(char searchCode) const {
+    std::cout << " searching for " << searchCode << " " << parameters.size() << " ";
+    for (int i = 0; i < parameters.size(); i++) {
+        std::cout << " has " << parameters[i].code;
         if(parameters[i].code == searchCode) {
             return true;
         }
     }
-
     return false;
 }
 
 
-double gcode::getCodeValue(char searchCode) {
+double gcode::getCodeValue(char searchCode) const {
     for (unsigned int i = 0; i < parameters.size(); i++) {
         if(parameters[i].code == searchCode) {
             return parameters[i].value;

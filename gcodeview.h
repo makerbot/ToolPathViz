@@ -7,6 +7,9 @@
 #include <gcode.h>
 #include <arcball.h>
 
+#include <commands.h>
+#include <visualizers.h>
+
 class GcodeView : public QGLWidget
 {
     Q_OBJECT        // must include this if you use Qt signals/slots
@@ -41,7 +44,8 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent event);
 
 public:
-    gcodeModel model;
+    commandModel model;
+    visualModel vmodel;
 private:
     Arcball arcball;
 

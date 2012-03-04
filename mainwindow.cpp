@@ -145,7 +145,7 @@ void MainWindow::loadFile(const QString &fileName) {
     // TODO: How to back off here if model load failed? Should we close the window, etc?
     // TODO: Do loading in background task...
     ui->graphicsView->loadModel(fileName);
-    ui->LayerHeight->setMaximum(ui->graphicsView->model.map.size());
+    //ui->LayerHeight->setMaximum(ui->graphicsView->model.map.size());
 }
 
 bool MainWindow::hasFile() {
@@ -158,17 +158,6 @@ void MainWindow::on_LayerHeight_sliderMoved(int position)
     ui->graphicsView->setCurrentLayer(position);
 
     // display the current layer height.
-}
-
-
-void MainWindow::on_zoomIn_clicked()
-{
-    ui->graphicsView->zoom(1.1);
-}
-
-void MainWindow::on_zoomOut_clicked()
-{
-    ui->graphicsView->zoom(.9);
 }
 
 void MainWindow::on_actionClose_triggered()
@@ -184,26 +173,4 @@ void MainWindow::on_actionExport_Gcode_File_triggered()
     QString filename = QFileDialog::getSaveFileName(this, tr("Export GCode"), QDir::currentPath(),  tr("GCode File (*.gcode)"));
     ui->graphicsView->exportModel(filename);
 
-}
-
-
-
-void MainWindow::on_panLeft_clicked()
-{
-    ui->graphicsView->panX(1.0);
-}
-
-void MainWindow::on_panRight_clicked()
-{
-    ui->graphicsView->panX(-1.0);
-}
-
-void MainWindow::on_panUp_clicked()
-{
-    ui->graphicsView->panY(-1.0);
-}
-
-void MainWindow::on_panDown_clicked()
-{
-    ui->graphicsView->panY(1.0);
 }
