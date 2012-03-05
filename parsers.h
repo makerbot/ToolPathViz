@@ -3,7 +3,6 @@
 
 #include "commands.h"
 
-// this contains parsers for gcode files
 namespace parsers {
 
     //mostly for testing purposes, just looks for X, Y, & Z codes
