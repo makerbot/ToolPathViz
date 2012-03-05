@@ -68,7 +68,7 @@ const string gcode::getComment() const {
 
 bool gcode::hasCode(char searchCode) const {
     std::cout << " searching for " << searchCode << " " << parameters.size() << " ";
-    for (int i = 0; i < parameters.size(); i++) {
+    for (unsigned int i = 0; i < parameters.size(); i++) {
         std::cout << " has " << parameters[i].code;
         if(parameters[i].code == searchCode) {
             return true;

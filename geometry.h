@@ -3,6 +3,9 @@
 
 #include <iostream>
 
+// this might want to be GLfloat
+typedef float color [4];
+
 struct point5d {
 public:
     // Destination of this instruction
@@ -27,17 +30,22 @@ public:
 
 };
 
-class segment
+// primitive is the base class for all the shapes
+// we might wish to hold in a visualModel.
+struct primitive
 {
-private:
-//    color c;
+    color c;
+    virtual ~primitive() {};
+};
 
-public:
-
+// segment is a simple line segment between two points
+struct segment : public primitive
+{
     point5d from;
     point5d to;
     segment(const point5d& f, const point5d& t) :
         from(f), to(t) {};
 };
+
 
 #endif // GEOMETRY_H

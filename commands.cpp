@@ -7,15 +7,11 @@ commandLine::commandLine(string line) {
 }
 
 void commandLine::addCommand(const command& c) {
-    commands.insert(std::pair<const commandType, const command*>(c.getType(), c.clone()));
-}
-
-std::multimap<const commandType, const command*> commandLine::getCommands() const {
-    return commands;
+    commands.insert(std::pair<const std::string, const command*>(typeid(c).name(), c.clone()));
 }
 
 commandLine::~commandLine() {
-    std::multimap<const commandType, const command*>::iterator it;
+    std::map<const std::string, const command*>::iterator it;
     for(it = commands.begin(); it != commands.end(); it++) {
         delete (*it).second;
     }
