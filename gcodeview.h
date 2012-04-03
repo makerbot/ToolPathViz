@@ -7,6 +7,8 @@
 #include <gcode.h>
 #include <arcball.h>
 
+#include "mgl/slicy.h"
+
 class GcodeView : public QGLWidget
 {
     Q_OBJECT        // must include this if you use Qt signals/slots
@@ -17,6 +19,8 @@ public slots:
 public:
     GcodeView(QWidget *parent);
 
+    void loadSliceData(const std::vector<mgl::SliceData> &sliceData);
+
     void loadModel(QString filename);
     void exportModel (QString filename);
     bool hasModel();
@@ -26,12 +30,14 @@ public:
     void zoom(float amount);
     void panX(float amount);
     void panY(float amount);
-    void setCurrentLayer(int layer);
-
+    void setMaximumVisibleLayer(int layer);
+    void setMinimumVisibleLayer(int layer);
 protected:
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
+
+    void paintGLgcode();
 
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
@@ -51,7 +57,9 @@ private:
     float scale;
     float pan_x;
     float pan_y;
-    int currentLayer;
+
+    int maxVisibleLayer;
+    int minVisibleLayer;
 };
 
 #endif // GCODEVIEW_H

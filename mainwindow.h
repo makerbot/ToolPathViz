@@ -22,6 +22,7 @@ public:
     bool hasFile();
 
     void updateWindowMenu();
+
 private slots:
     void on_actionLoad_GCode_triggered();
 
@@ -43,6 +44,16 @@ private slots:
 
     void on_panDown_clicked();
 
+    void on_buttonConfigBrowse_clicked();
+
+    void on_button3dModelBrowse_clicked();
+
+    void on_buttonSlice_clicked();
+
+    void on_LayerMin_destroyed(QObject *arg1);
+
+    void on_LayerMin_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
 
@@ -54,6 +65,8 @@ private:
 
     enum { MaxRecentFiles = 10 };
     QAction *recentFileActs[MaxRecentFiles];
+
+    void sliceModelAndCreateToolPaths();
 };
 
 #endif // MAINWINDOW_H
