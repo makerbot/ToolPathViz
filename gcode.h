@@ -6,10 +6,11 @@
 #include <fstream>
 #include <algorithm>
 #include <QString>
+#include <iostream>
 
-using std::string;
-using std::vector;
-using std::ifstream;
+#include "mgl/slicy.h"
+
+using namespace std;
 
 // Object that represents a single parsed line of GCode.
 class gcode {
@@ -107,26 +108,35 @@ public:
 };
 
 
+enum PointKind {  unknown, travel, shell, perimeter, infill, roofing};
 
 // TODO: Use whatever the equivalent class here should be.
 // TODO: This is also unravelling the state machine into individual events- maybe it's overkill? Is there a better model?
 struct point {
 public:
+
+    PointKind kind;
+    int nb;
+
+
     // Destination of this instruction
     float x;
     float y;
     float z;
 
     // true if the toolhead is on during this move
-    bool toolEnabled;
+    //bool toolEnabled;
 
     // Feedrate of this instruction
     float feedrate;
     // Flowrate of this instruction
     float flowrate;
 
-    point(float x, float y, float z, float feedrate, bool toolEnabled, float flowrate) :
-        x(x), y(y), z(z), toolEnabled(toolEnabled), feedrate(feedrate), flowrate(flowrate) {}
+    point(PointKind kind, int nb, float x, float y, float z, float feedrate, float flowrate) :
+        kind(kind), nb(nb), x(x), y(y), z(z),  feedrate(feedrate), flowrate(flowrate)
+    {
+      //  if(kind == travel) cout << "#";
+    }
 
 
 };
@@ -134,11 +144,15 @@ public:
 
 
 // Object that can open a file containing GCode and turn it into a series of lines
-class gcodeModel {
+class gcodeModel
+{
+
+    bool toolEnabled;
 public:
-    // For now, we have a long list of points to string together, that is public!
     vector<point> points;
     layerMap map;
+    unsigned int getMapSize(){return  map.size();}
+    unsigned int getPointCount(){return points.size();}
     minMax<float> feedrateBounds;
     minMax<float> flowrateBounds;
     minMax<float> zHeightBounds;
@@ -146,9 +160,14 @@ public:
 public:
     gcodeModel();
 
+    void loadSliceData(const std::vector<mgl::SliceData> &sliceData);
+
     void loadGCode(QString filename);
     void exportGCode(QString filename);
     float getModelZCenter();
+private:
+    void loadGcodeLine(const char* lineStr);
+
 };
 
 

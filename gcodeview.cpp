@@ -7,6 +7,7 @@
 
 #include <iostream>
 
+using namespace std;
 
 static void qNormalizeAngle(int &angle)
 {
@@ -31,7 +32,6 @@ GcodeView::GcodeView(QWidget *parent) :
 // TODO: This is very likely not thread safe, and this is probably detrimental to the event timer approach.
 void GcodeView::animationUpdate() {
     if (arcball.is_spinning) {
-        std::cout << "here!" << std::endl;
         arcball.idle();
         *arcball.rot_ptr = *arcball.rot_ptr * arcball.rot_increment;
         updateGL();
@@ -46,8 +46,8 @@ void GcodeView::resetView() {
     scale = .1;
     pan_x = 0.0;
     pan_y = 0.0;
-    currentLayer = 0;
-
+    maxVisibleLayer = 0;
+    minVisibleLayer = 0;
     // TODO: reset arcball
 }
 
@@ -78,6 +78,15 @@ void GcodeView::resizeGL(int width, int height)
 
 void GcodeView::paintGL()
 {
+    paintGLgcode();
+}
+
+
+void GcodeView::paintGLgcode()
+{
+   // static int frameCount = 0;
+   // cout << frameCount << endl;
+   // frameCount ++;
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -107,40 +116,98 @@ void GcodeView::paintGL()
     glBegin(GL_LINE_STRIP);
 
 
-    for (unsigned int i = 1; i < model.points.size(); i++) {
-            point a = model.points[i-1];
-            point b = model.points[i];
 
-            float alpha = 0;
 
-            if (model.map.heightLessThanLayer(currentLayer, b.z)) {
-                alpha = .20;
+
+
+
+    for (unsigned int i = 1; i < model.getPointCount(); i++) {
+
+        float red=0;
+        float green=0;
+        float blue=0;
+
+        point a = model.points[i-1];
+        point b = model.points[i];
+
+        float dark = 0.025;
+        float clear = 0.4;
+
+        float alpha= clear;
+
+        if (model.map.heightLessThanLayer(minVisibleLayer, b.z))
+        {
+            // cout << "minlayer " << minVisibleLayer << endl;
+            alpha = dark;
+        }
+
+        if (model.map.heightInLayer(maxVisibleLayer, b.z))
+        {
+            alpha = 1;
+        }
+
+
+        if (model.map.heightGreaterThanLayer(maxVisibleLayer, b.z))
+        {
+                // cout << "minlayer " << minVisibleLayer << endl;
+                alpha = dark;
+
+         }
+
+
+
+
+        switch (b.kind) {
+          case travel:
+            blue = 0.5;
+            break;
+          case infill:
+            red = 1;
+            green = 1;
+            blue = 0;
+            break;
+          case shell:
+            if(b.nb ==0)
+            {
+                red = 1;
             }
-            else if (model.map.heightInLayer(currentLayer, b.z)) {
-                alpha = 1;
+            else
+            {
+                green = 1;
+                blue = 1 ;
             }
-            else {
-                alpha = .02;
-            }
+            break;
+          case perimeter:
+            blue = 0.5;
+            red = 0.5;
+            green = 0.5;
+            break;
+          default:
+            green = 1;
 
+         }
 
-            // scale the feedrate to the bounds of what this job contains;
-//            float val = (b.feedrate - model.feedrateBounds.getMin())/(model.feedrateBounds.getMax() - model.feedrateBounds.getMin());
-            float val = (b.flowrate - model.flowrateBounds.getMin())/(model.flowrateBounds.getMax() - model.flowrateBounds.getMin());
+        if(b.kind == travel)
+        {
+            alpha *= 0.25;
+        }
 
-            glColor4f(val,1-val,0,alpha);
-
-            if (!b.toolEnabled) {
-                glColor4f(0,0,255,alpha);
-            }
-
-            glVertex3f(a.x, a.y, a.z); // origin of the line
-            glVertex3f(b.x, b.y, b.z); // ending point of the line
+        glColor4f(red,green,blue,alpha);
+        glVertex3f(a.x, a.y, a.z); // origin of the line
+        glVertex3f(b.x, b.y, b.z); // ending point of the line
     }
 
     glEnd( );
 
     glPopMatrix();
+}
+
+void GcodeView::loadSliceData(const std::vector<mgl::SliceData>&sliceData)
+{
+    model.loadSliceData(sliceData);
+    resetView();
+
+    updateGL();
 }
 
 void GcodeView::loadModel(QString filename) {
@@ -212,10 +279,19 @@ void GcodeView::mouseDoubleClickEvent(QMouseEvent event) {
     updateGL();
 }
 
-void GcodeView::setCurrentLayer(int layer) {
+void GcodeView::setMinimumVisibleLayer(int layer)
+{
+    if (layer >=0 && layer < model.map.size()) {
+        minVisibleLayer = layer;
+        std::cout << "Minimum visible layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
+        updateGL();
+    }
+}
+
+void GcodeView::setMaximumVisibleLayer(int layer) {
     if (layer < model.map.size()) {
-        currentLayer = layer;
-        std::cout << "Current layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
+        maxVisibleLayer = layer;
+        std::cout << "Maximum visible layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
         updateGL();
     }
 }
