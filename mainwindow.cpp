@@ -300,7 +300,7 @@ void MainWindow::sliceModelAndCreateToolPaths()
 
         GCoder gcoder;
         loadGCoderData(config, gcoder);
-        Slicer slicerCfg;
+        SlicerConfig slicerCfg;
         loadSlicerData(config, slicerCfg);
 
         std::vector<mgl::SliceData> slices;
