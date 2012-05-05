@@ -303,10 +303,17 @@ void MainWindow::sliceModelAndCreateToolPaths()
         SlicerConfig slicerCfg;
         loadSlicerData(config, slicerCfg);
 
+        ModelSkeleton skeleton;
         std::vector<mgl::SliceData> slices;
 
         Progress progress(ui->label_task, ui->progressBar);
-        miracleGrue(gcoder, slicerCfg, model3dfileName.c_str(), NULL, gcodeFile.c_str(), -1, -1, slices, &progress);
+        miracleGrue(gcoder,
+                    slicerCfg,
+                    model3dfileName.c_str(),
+                    NULL, gcodeFile.c_str(), -1, -1,
+                    skeleton,
+                    slices,
+                    &progress);
 
         ui->graphicsView->loadSliceData(slices);
 
