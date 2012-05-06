@@ -158,6 +158,10 @@ void GcodeView::paintGLgcode()
 
 
         switch (b.kind) {
+        case invisible:
+          alpha = 0;
+          break;
+
           case travel:
             blue = 0.5;
             break;
@@ -173,15 +177,53 @@ void GcodeView::paintGLgcode()
             }
             else
             {
-                green = 1;
-                blue = 1 ;
+                if(b.nb ==1)
+                {
+                    green = 1;
+                    blue = 1 ;
+                }
+                else
+                {
+                    if(b.nb %2 == 0)
+                    {
+                        green = 1;
+                        red = 0.5;
+                        blue = 0;
+                    }
+                    else
+                    {
+                        green = 1;
+                        red = 0.5;
+                        blue = 1;
+                    }
+                }
             }
+
             break;
           case perimeter:
             blue = 0.5;
             red = 0.5;
             green = 0.5;
             break;
+
+          case surface:
+
+              green = 0.5;
+              alpha *= 0.5;
+              break;
+
+          case roofing:
+              red = 1;
+//            blue =0;
+//            green = b.nb==1?1:0;
+//            red = b.nb == 0?1:0;
+            break;
+
+        case flooring:
+          blue = 1;
+          //green = b.nb == 1?0.75:0;
+          //red   = b.nb == 0?0.75:0;
+          break;
           default:
             green = 1;
 
@@ -195,6 +237,7 @@ void GcodeView::paintGLgcode()
         glColor4f(red,green,blue,alpha);
         glVertex3f(a.x, a.y, a.z); // origin of the line
         glVertex3f(b.x, b.y, b.z); // ending point of the line
+
     }
 
     glEnd( );
@@ -202,9 +245,9 @@ void GcodeView::paintGLgcode()
     glPopMatrix();
 }
 
-void GcodeView::loadSliceData(const std::vector<mgl::SliceData>&sliceData)
+void GcodeView::loadSliceData(const  mgl::ModelSkeleton &skeleton, const std::vector<mgl::SliceData>&sliceData)
 {
-    model.loadSliceData(sliceData);
+    model.loadSliceData(skeleton, sliceData);
     resetView();
 
     updateGL();

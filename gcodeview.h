@@ -7,7 +7,7 @@
 #include <gcode.h>
 #include <arcball.h>
 
-#include "mgl/slicy.h"
+#include "mgl/skeletor.h"
 
 class GcodeView : public QGLWidget
 {
@@ -19,7 +19,7 @@ public slots:
 public:
     GcodeView(QWidget *parent);
 
-    void loadSliceData(const std::vector<mgl::SliceData> &sliceData);
+    void loadSliceData(const  mgl::ModelSkeleton &skeleton, const std::vector<mgl::SliceData> &sliceData);
 
     void loadModel(QString filename);
     void exportModel (QString filename);

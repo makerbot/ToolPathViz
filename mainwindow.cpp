@@ -315,7 +315,7 @@ void MainWindow::sliceModelAndCreateToolPaths()
                     slices,
                     &progress);
 
-        ui->graphicsView->loadSliceData(slices);
+        ui->graphicsView->loadSliceData(skeleton, slices);
 
         ui->LayerHeight->setMaximum(ui->graphicsView->model.getMapSize() );
         ui->LayerMin->setMaximum(ui->graphicsView->model.getMapSize() );

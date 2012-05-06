@@ -269,14 +269,13 @@ void addPointsFromPolygon(const Polygon &poly, float z, PointKind kind,  int nb,
     {
         Vector2 p = poly[i];
         points.push_back(point(kind, nb,  p[0], p[1], z, feedrate, flowrate));
-        map.recordHeight(z);
 
     }
 }
 
 void addPointsFromPolygons(const Polygons& polys, float z, PointKind kind, int nb,  float feedrate, float flowrate, vector<point> &points, layerMap& map)
 {
-
+    map.recordHeight(z);
     for(unsigned int i=0; i < polys.size(); i++)
     {
        const Polygon &poly = polys[i];
@@ -290,11 +289,89 @@ void addPointsFromPolygons(const Polygons& polys, float z, PointKind kind, int n
     }
 }
 
-void gcodeModel::loadSliceData(const std::vector<mgl::SliceData> &slices)
+bool showSkeleton = true;
+
+void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid, float z, PointKind kind, float xOff, float yOff, vector<point> &points, layerMap& map)
+{
+    float feedrate = 10;
+    float flowrate = 5;
+    int nb =0;
+
+
+
+    map.recordHeight(z);
+    for(size_t i=0; i < gridRanges.xRays.size(); i++)
+    {
+        float y = grid.readYvalues()[i];
+        const std::vector<ScalarRange>  &line = gridRanges.xRays[i];
+        for(size_t j=0; j < line.size(); j++)
+        {
+            const ScalarRange &range = line[j];
+            points.push_back(point(invisible, 0, xOff + range.min, yOff+y, z, 0, 0));
+            points.push_back(point(kind, 0,  xOff + range.min, yOff+y, z, feedrate, flowrate));
+            points.push_back(point(kind, 0,  xOff + range.max, yOff+y, z, feedrate, flowrate));
+        }
+    }
+
+    for(size_t i=0; i < gridRanges.yRays.size(); i++)
+    {
+        float x = grid.readXvalues()[i];
+        const std::vector<ScalarRange>  &line = gridRanges.yRays[i];
+        for(size_t j=0; j < line.size(); j++)
+        {
+            const ScalarRange &range = line[j];
+            points.push_back(point(invisible, 0,  xOff + x, yOff+range.min, z, 0, 0));
+            points.push_back(point(kind, 1,  xOff + x, yOff+range.min, z, feedrate, flowrate));
+            points.push_back(point(kind, 1, xOff + x, yOff+range.max, z, feedrate, flowrate));
+
+        }
+    }
+}
+
+void gcodeModel::loadRegions(const mgl::ModelSkeleton &skeleton)
+{
+    float xOff = 3 * skeleton.grid.readXvalues()[0] + skeleton.grid.readXvalues().back();
+    float yOff = 3 * skeleton.grid.readYvalues()[0] + skeleton.grid.readYvalues().back();;
+
+    for(size_t i=0; i<skeleton.roofings.size(); i++)
+    {
+        const GridRanges &surface = skeleton.roofings[i];
+        float z = skeleton.layerMeasure.sliceIndexToHeight(i);
+       // addPointsFromSurface(surface, skeleton.grid,  z, roofing, xOff, 0, points, map);
+
+        addPointsFromSurface(surface, skeleton.grid,  z, roofing, 0, yOff, points, map);
+    }
+
+    for(size_t i=0; i<skeleton.floorings.size(); i++)
+    {
+        const GridRanges &surface = skeleton.floorings[i];
+        float z = skeleton.layerMeasure.sliceIndexToHeight(i);
+     //   addPointsFromSurface(surface, skeleton.grid,  z, flooring, xOff, 0, points, map);
+        addPointsFromSurface(surface, skeleton.grid,  z, flooring,    0, -yOff, points, map);
+    }
+
+    for(size_t i=0; i<skeleton.flatSurfaces.size(); i++)
+    {
+        const GridRanges &surf = skeleton.flatSurfaces[i];
+        float z = skeleton.layerMeasure.sliceIndexToHeight(i);
+        addPointsFromSurface(surf, skeleton.grid,  z, surface, xOff, 0, points, map);
+    }
+
+}
+
+void gcodeModel::loadSliceData(const mgl::ModelSkeleton &skeleton, const std::vector<mgl::SliceData> &slices)
 {
 
     points.clear();
     map.clear();
+    map.recordHeight(0);
+
+    if(showSkeleton)
+    {
+
+        loadRegions(skeleton);
+
+    }
 
     float feedrate = 2400;
     float flowrate = 4;

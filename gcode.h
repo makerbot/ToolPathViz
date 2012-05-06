@@ -8,7 +8,7 @@
 #include <QString>
 #include <iostream>
 
-#include "mgl/slicy.h"
+#include "mgl/skeletor.h"
 
 using namespace std;
 
@@ -108,7 +108,7 @@ public:
 };
 
 
-enum PointKind {  unknown, travel, shell, perimeter, infill, roofing};
+enum PointKind {  unknown, travel, shell, perimeter, infill, roofing, flooring, surface, invisible};
 
 // TODO: Use whatever the equivalent class here should be.
 // TODO: This is also unravelling the state machine into individual events- maybe it's overkill? Is there a better model?
@@ -160,7 +160,9 @@ public:
 public:
     gcodeModel();
 
-    void loadSliceData(const std::vector<mgl::SliceData> &sliceData);
+    void loadSliceData(const mgl::ModelSkeleton &skeleton, const std::vector<mgl::SliceData> &sliceData);
+
+    void loadRegions(const mgl::ModelSkeleton &skeleton);
 
     void loadGCode(QString filename);
     void exportGCode(QString filename);
