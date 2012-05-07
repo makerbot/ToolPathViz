@@ -130,8 +130,6 @@ void layerMap::clear() {
     heights.clear();
 }
 
-
-
 gcodeModel::gcodeModel() {
     toolEnabled = false;
 }
@@ -263,17 +261,17 @@ void gcodeModel::loadGcodeLine(const char* lineStr)
 
 
 
-void addPointsFromPolygon(const Polygon &poly, float z, PointKind kind,  int nb, float feedrate, float flowrate, vector<point> &points, layerMap& map)
+void addPointsFromPolygon(const Polygon &poly, float xOff, float yOff, float z, PointKind kind,  int nb, float feedrate, float flowrate, vector<point> &points, layerMap& map)
 {
     for(unsigned int i=0; i < poly.size(); i++)
     {
         Vector2 p = poly[i];
-        points.push_back(point(kind, nb,  p[0], p[1], z, feedrate, flowrate));
+        points.push_back(point(kind, nb,  p[0] + xOff, p[1] + yOff, z, feedrate, flowrate));
 
     }
 }
 
-void addPointsFromPolygons(const Polygons& polys, float z, PointKind kind, int nb,  float feedrate, float flowrate, vector<point> &points, layerMap& map)
+void addPointsFromPolygons(const Polygons& polys, float xOff, float yOff, float z, PointKind kind, int nb,  float feedrate, float flowrate, vector<point> &points, layerMap& map)
 {
     map.recordHeight(z);
     for(unsigned int i=0; i < polys.size(); i++)
@@ -282,10 +280,9 @@ void addPointsFromPolygons(const Polygons& polys, float z, PointKind kind, int n
        if(!poly.size()) continue;
        // move to
        const Vector2 p = poly[0];
-       points.push_back(point(travel, 0,  p[0], p[1], z, feedrate, flowrate));
+       points.push_back(point(travel, 0, xOff + p[0], yOff + p[1] , z, feedrate, flowrate));
        // polygon
-       addPointsFromPolygon(poly, z, kind, nb, feedrate , flowrate, points, map);
-
+       addPointsFromPolygon(poly, xOff, yOff, z, kind, nb, feedrate , flowrate, points, map);
     }
 }
 
@@ -331,7 +328,7 @@ void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid, float
 void gcodeModel::loadRegions(const mgl::ModelSkeleton &skeleton)
 {
     float xOff = 3 * skeleton.grid.readXvalues()[0] + skeleton.grid.readXvalues().back();
-    float yOff = 3 * skeleton.grid.readYvalues()[0] + skeleton.grid.readYvalues().back();;
+    float yOff = 3 * skeleton.grid.readYvalues()[0] + skeleton.grid.readYvalues().back();
 
     for(size_t i=0; i<skeleton.roofings.size(); i++)
     {
@@ -378,6 +375,8 @@ void gcodeModel::loadSliceData(const mgl::ModelSkeleton &skeleton, const std::ve
     feedrateBounds.evaluate(feedrate);
     flowrateBounds.evaluate(flowrate);
 
+    float xOff = -1.1 * skeleton.grid.readXvalues()[0] + skeleton.grid.readXvalues().back();
+
     for (unsigned int i = 0; i < slices.size(); i++)
     {
         const SliceData &sliceData = slices[i];
@@ -392,13 +391,19 @@ void gcodeModel::loadSliceData(const mgl::ModelSkeleton &skeleton, const std::ve
             //cout << "slice " << slice.insetLoopsList.size() << endl;
             //cout << "BOUNDARY COUNT " << boundary.size() << endl;
 
-            addPointsFromPolygons(boundaries, z,  perimeter, 0, feedrate, flowrate, points, map);
-            addPointsFromPolygons(infills, z, infill, 0, feedrate, flowrate,  points, map);
+            addPointsFromPolygons(boundaries, xOff, 0, z,  perimeter, 0, feedrate, flowrate, points, map);
+
+            addPointsFromPolygons(boundaries, 0, 0, z,  perimeter, 0, feedrate, flowrate, points, map);
+
+            addPointsFromPolygons(infills, 0, 0, z, infill, 0, feedrate, flowrate,  points, map);
 
             for(unsigned int j=0; j< slice.insetLoopsList.size(); j++)
             {
                 const Polygons& insetLoops = slice.insetLoopsList[j];
-                addPointsFromPolygons(insetLoops, z, shell, j, feedrate, flowrate,  points, map);
+                addPointsFromPolygons(insetLoops, 0, 0, z, shell, j, feedrate, flowrate,  points, map);
+
+                // right side
+                addPointsFromPolygons(insetLoops, xOff, 0, z, shell, j, feedrate, flowrate,  points, map);
             }
         }
     }
