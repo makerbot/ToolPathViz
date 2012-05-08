@@ -8,7 +8,7 @@
 #include <QString>
 #include <iostream>
 
-#include "mgl/skeletor.h"
+#include "mgl/pather.h"
 
 using namespace std;
 
@@ -160,9 +160,9 @@ public:
 public:
     gcodeModel();
 
-    void loadSliceData(const mgl::ModelSkeleton &skeleton, const std::vector<mgl::SliceData> &sliceData);
+    void loadSliceData(const mgl::Regions &regions, const std::vector<mgl::SliceData> &sliceData);
 
-    void loadRegions(const mgl::ModelSkeleton &skeleton);
+    void loadRegions(const mgl::Regions &regions);
 
     void loadGCode(QString filename);
     void exportGCode(QString filename);

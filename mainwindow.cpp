@@ -298,24 +298,24 @@ void MainWindow::sliceModelAndCreateToolPaths()
         cout << "loading config: " << configFileName << endl;
         config.readFromFile(configFileName.c_str());
 
-        GCoder gcoder;
-        loadGCoderData(config, gcoder);
+        GCoderConfig gcoderCfg;
+        loadGCoderConfigFromFile(config, gcoderCfg);
         SlicerConfig slicerCfg;
-        loadSlicerData(config, slicerCfg);
+        loadSlicerConfigFromFile(config, slicerCfg);
 
-        ModelSkeleton skeleton;
+        Regions regions;
         std::vector<mgl::SliceData> slices;
 
         Progress progress(ui->label_task, ui->progressBar);
-        miracleGrue(gcoder,
+        miracleGrue(gcoderCfg,
                     slicerCfg,
                     model3dfileName.c_str(),
                     NULL, gcodeFile.c_str(), -1, -1,
-                    skeleton,
+                    regions,
                     slices,
                     &progress);
 
-        ui->graphicsView->loadSliceData(skeleton, slices);
+        ui->graphicsView->loadSliceData(regions, slices);
 
         ui->LayerHeight->setMaximum(ui->graphicsView->model.getMapSize() );
         ui->LayerMin->setMaximum(ui->graphicsView->model.getMapSize() );
