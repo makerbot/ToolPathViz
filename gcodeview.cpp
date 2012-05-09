@@ -245,9 +245,9 @@ void GcodeView::paintGLgcode()
     glPopMatrix();
 }
 
-void GcodeView::loadSliceData(const  mgl::Regions &regions, const std::vector<mgl::SliceData>&sliceData)
+void GcodeView::loadSliceData(const mgl::Tomograph &tomograph, const  mgl::Regions &regions, const std::vector<mgl::SliceData>&sliceData)
 {
-    model.loadSliceData(regions, sliceData);
+    model.loadSliceData(tomograph, regions, sliceData);
     resetView();
 
     updateGL();

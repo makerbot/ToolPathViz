@@ -303,6 +303,7 @@ void MainWindow::sliceModelAndCreateToolPaths()
         SlicerConfig slicerCfg;
         loadSlicerConfigFromFile(config, slicerCfg);
 
+        Tomograph tomograph;
         Regions regions;
         std::vector<mgl::SliceData> slices;
 
@@ -311,11 +312,12 @@ void MainWindow::sliceModelAndCreateToolPaths()
                     slicerCfg,
                     model3dfileName.c_str(),
                     NULL, gcodeFile.c_str(), -1, -1,
+                    tomograph,
                     regions,
                     slices,
                     &progress);
 
-        ui->graphicsView->loadSliceData(regions, slices);
+        ui->graphicsView->loadSliceData(tomograph, regions, slices);
 
         ui->LayerHeight->setMaximum(ui->graphicsView->model.getMapSize() );
         ui->LayerMin->setMaximum(ui->graphicsView->model.getMapSize() );

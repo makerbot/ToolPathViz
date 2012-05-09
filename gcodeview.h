@@ -19,7 +19,7 @@ public slots:
 public:
     GcodeView(QWidget *parent);
 
-    void loadSliceData(const  mgl::Regions &regions, const std::vector<mgl::SliceData> &sliceData);
+    void loadSliceData(const mgl::Tomograph &tomograph, const  mgl::Regions &regions, const std::vector<mgl::SliceData> &sliceData);
 
     void loadModel(QString filename);
     void exportModel (QString filename);

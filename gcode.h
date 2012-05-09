@@ -160,9 +160,9 @@ public:
 public:
     gcodeModel();
 
-    void loadSliceData(const mgl::Regions &regions, const std::vector<mgl::SliceData> &sliceData);
+    void loadSliceData(const mgl::Tomograph &tomograph, const mgl::Regions &regions, const std::vector<mgl::SliceData> &sliceData);
 
-    void loadRegions(const mgl::Regions &regions);
+    void loadRegions(const mgl::Tomograph &tomograph, const mgl::Regions &regions);
 
     void loadGCode(QString filename);
     void exportGCode(QString filename);
