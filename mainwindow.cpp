@@ -286,11 +286,11 @@ void MainWindow::sliceModelAndCreateToolPaths()
         MyComputer computer;
 
         string configFileName = ui->lineEditConfigFile->text().toStdString();
-        string model3dfileName = ui->lineEdit3dModelFile->text().toStdString();
+        string modelFile = ui->lineEdit3dModelFile->text().toStdString();
 
-        string gcodeFile = computer.fileSystem.ChangeExtension(computer.fileSystem.ExtractFilename(model3dfileName.c_str()).c_str(), ".gcode" );
+        string gcodeFile = computer.fileSystem.ChangeExtension(computer.fileSystem.ExtractFilename(modelFile.c_str()).c_str(), ".gcode" );
         cout << gcodeFile << endl;
-        string scadFile = computer.fileSystem.ChangeExtension(computer.fileSystem.ExtractFilename(model3dfileName.c_str()).c_str(), ".scad" );
+        string scadFile = computer.fileSystem.ChangeExtension(computer.fileSystem.ExtractFilename(modelFile.c_str()).c_str(), ".scad" );
         cout << scadFile << endl;
 
         //configFileName += "/miracle.config";
@@ -303,28 +303,31 @@ void MainWindow::sliceModelAndCreateToolPaths()
         SlicerConfig slicerCfg;
         loadSlicerConfigFromFile(config, slicerCfg);
 
+        Progress progress(ui->label_task, ui->progressBar);
+
         Tomograph tomograph;
         Regions regions;
         std::vector<mgl::SliceData> slices;
 
-        Progress progress(ui->label_task, ui->progressBar);
-        miracleGrue(gcoderCfg,
-                    slicerCfg,
-                    model3dfileName.c_str(),
-                    NULL, gcodeFile.c_str(), -1, -1,
-                    tomograph,
-                    regions,
-                    slices,
-                    &progress);
+        Slicer slicer(slicerCfg, &progress);
+        slicer.tomographyze(modelFile.c_str(), tomograph);
+
+        Regioner regioner(slicerCfg, &progress);
+        regioner.generateSkeleton(tomograph, regions);
+
+        Pather pather(&progress);
+        pather.generatePaths(tomograph, regions, slices);
+
+        std::ofstream gout(gcodeFile.c_str());
+        GCoder gcoder(gcoderCfg, &progress);
+        gcoder.writeGcodeFile(slices, tomograph.layerMeasure, gout, modelFile.c_str());
+        gout.close();
 
         ui->graphicsView->loadSliceData(tomograph, regions, slices);
-
         ui->LayerHeight->setMaximum(ui->graphicsView->model.getMapSize() );
         ui->LayerMin->setMaximum(ui->graphicsView->model.getMapSize() );
         ui->LayerMin->setValue(0 );
         ui->LayerHeight->setValue(0 );
-
-
     }
     catch(mgl::Exception &mixup)
     {
@@ -368,4 +371,23 @@ void MainWindow::on_LayerMin_destroyed(QObject *arg1)
 
 }
 
+void MainWindow::on_actionSaveGcode_triggered()
+{
+    cout << "hello save menu!" << endl;
+}
 
+
+void MainWindow::on_pushButtonSaveGcode_clicked()
+{
+    cout << "hello save button!" << endl;
+}
+
+void MainWindow::on_actionSave_gcode_triggered()
+{
+    cout << "hello on_actionSave_gcode_triggered save menu!" << endl;
+}
+
+void MainWindow::on_radioButtonSurfs_toggled(bool checked)
+{
+    cout << "Toggle surfs" << endl;
+}

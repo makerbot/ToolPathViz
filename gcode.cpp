@@ -261,7 +261,7 @@ void gcodeModel::loadGcodeLine(const char* lineStr)
 
 
 
-void addPointsFromPolygon(const Polygon &poly, float xOff, float yOff, float z, PointKind kind,  int nb, float feedrate, float flowrate, vector<point> &points, layerMap& map)
+void addPointsFromPolygon(const Polygon &poly, float xOff, float yOff, float z, PointKind kind, int nb, float feedrate, float flowrate, vector<point> &points, layerMap& map)
 {
     for(unsigned int i=0; i < poly.size(); i++)
     {
@@ -271,7 +271,7 @@ void addPointsFromPolygon(const Polygon &poly, float xOff, float yOff, float z, 
     }
 }
 
-void addPointsFromPolygons(const Polygons& polys, float xOff, float yOff, float z, PointKind kind, int nb,  float feedrate, float flowrate, vector<point> &points, layerMap& map)
+void addPointsFromPolygons(const Polygons& polys, float xOff, float yOff, float z, PointKind kind, PointKind interPointKind, int nb,  float feedrate, float flowrate, vector<point> &points, layerMap& map)
 {
     map.recordHeight(z);
     for(unsigned int i=0; i < polys.size(); i++)
@@ -280,7 +280,8 @@ void addPointsFromPolygons(const Polygons& polys, float xOff, float yOff, float 
        if(!poly.size()) continue;
        // move to
        const Vector2 p = poly[0];
-       points.push_back(point(travel, 0, xOff + p[0], yOff + p[1] , z, feedrate, flowrate));
+
+       points.push_back(point(interPointKind, 0, xOff + p[0], yOff + p[1] , z, feedrate, flowrate));
        // polygon
        addPointsFromPolygon(poly, xOff, yOff, z, kind, nb, feedrate , flowrate, points, map);
     }
@@ -367,9 +368,7 @@ void gcodeModel::loadSliceData(const Tomograph& tomograph,
 
     if(showSkeleton)
     {
-
         loadRegions(tomograph, regions);
-
     }
 
     float feedrate = 2400;
@@ -378,6 +377,34 @@ void gcodeModel::loadSliceData(const Tomograph& tomograph,
     flowrateBounds.evaluate(flowrate);
 
     float xOff = -1.1 * tomograph.grid.readXvalues()[0] + tomograph.grid.readXvalues().back();
+    for (unsigned int i = 0; i < slices.size(); i++)
+    {
+        const SliceData &sliceData = slices[i];
+        for(unsigned int extruderId = 0; extruderId < sliceData.extruderSlices.size(); extruderId++)
+        {
+            const ExtruderSlice &slice = sliceData.extruderSlices[extruderId];
+            float z = (float) sliceData.getZHeight();
+
+            //cout << "sazz "  <<endl;
+            const Polygons &boundaries = slice.boundary;
+            const Polygons &infills = slice.infills;
+            //cout << "slice " << slice.insetLoopsList.size() << endl;
+            //cout << "BOUNDARY COUNT " << boundary.size() << endl;
+
+            // main view
+            addPointsFromPolygons(boundaries, 0, 0, z,  perimeter, travel, 0, feedrate, flowrate, points, map);
+            addPointsFromPolygons(infills, 0, 0, z, infill, travel, 0, feedrate, flowrate,  points, map);
+
+
+            for(unsigned int j=0; j< slice.insetLoopsList.size(); j++)
+            {
+                const Polygons& insetLoops = slice.insetLoopsList[j];
+
+                addPointsFromPolygons(insetLoops, 0, 0, z, shell, travel, j, feedrate, flowrate,  points, map);
+            }
+        }
+    }
+
 
     for (unsigned int i = 0; i < slices.size(); i++)
     {
@@ -393,21 +420,17 @@ void gcodeModel::loadSliceData(const Tomograph& tomograph,
             //cout << "slice " << slice.insetLoopsList.size() << endl;
             //cout << "BOUNDARY COUNT " << boundary.size() << endl;
 
-            addPointsFromPolygons(boundaries, xOff, 0, z,  perimeter, 0, feedrate, flowrate, points, map);
-
-            addPointsFromPolygons(boundaries, 0, 0, z,  perimeter, 0, feedrate, flowrate, points, map);
-
-            addPointsFromPolygons(infills, 0, 0, z, infill, 0, feedrate, flowrate,  points, map);
+             // right side
+            addPointsFromPolygons(boundaries, xOff, 0, z,  perimeter, invisible, 0, feedrate, flowrate, points, map);
 
             for(unsigned int j=0; j< slice.insetLoopsList.size(); j++)
             {
                 const Polygons& insetLoops = slice.insetLoopsList[j];
-                addPointsFromPolygons(insetLoops, 0, 0, z, shell, j, feedrate, flowrate,  points, map);
-
                 // right side
-                addPointsFromPolygons(insetLoops, xOff, 0, z, shell, j, feedrate, flowrate,  points, map);
+                addPointsFromPolygons(insetLoops, xOff, 0, z, shell, invisible, j, feedrate, flowrate,  points, map);
             }
         }
+
     }
 
 }

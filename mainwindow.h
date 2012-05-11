@@ -54,6 +54,14 @@ private slots:
 
     void on_LayerMin_valueChanged(int value);
 
+    void on_actionSaveGcode_triggered();
+
+    void on_pushButtonSaveGcode_clicked();
+
+    void on_actionSave_gcode_triggered();
+
+    void on_radioButtonSurfs_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
 

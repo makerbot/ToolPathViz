@@ -62,45 +62,6 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="6">
-       <spacer name="horizontalSpacer_6">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="5" column="6">
-       <spacer name="horizontalSpacer_7">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="7" column="6">
-       <spacer name="horizontalSpacer_8">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="2" column="9">
        <spacer name="horizontalSpacer_9">
         <property name="orientation">
@@ -129,19 +90,6 @@
       </item>
       <item row="7" column="9">
        <spacer name="horizontalSpacer_11">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="7" column="7">
-       <spacer name="horizontalSpacer_12">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -205,19 +153,6 @@
         </property>
        </spacer>
       </item>
-      <item row="5" column="8">
-       <spacer name="horizontalSpacer_23">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="7" column="8">
        <spacer name="horizontalSpacer_24">
         <property name="orientation">
@@ -251,32 +186,6 @@
          <string>Pan Right</string>
         </property>
        </widget>
-      </item>
-      <item row="2" column="7">
-       <spacer name="horizontalSpacer_19">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="5" column="7">
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item row="2" column="3">
        <widget class="QLineEdit" name="lineEditConfigFile"/>
@@ -327,7 +236,7 @@
        </widget>
       </item>
       <item row="7" column="4">
-       <spacer name="horizontalSpacer_20">
+       <spacer name="horizontalSpacer_7">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -338,6 +247,73 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item row="7" column="6">
+       <spacer name="horizontalSpacer_12">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="5" column="6">
+       <widget class="QRadioButton" name="radioButtonSurfs">
+        <property name="text">
+         <string>surface</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="7">
+       <widget class="QRadioButton" name="radioButtonFloors">
+        <property name="text">
+         <string>floor</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="6">
+       <spacer name="horizontalSpacer_19">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="2" column="7">
+       <widget class="QRadioButton" name="radioButtonRoofs">
+        <property name="text">
+         <string>roof</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="7">
+       <spacer name="horizontalSpacer_23">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="5" column="8">
+       <widget class="QRadioButton" name="radioButtonLoops">
+        <property name="text">
+         <string>loop</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -364,6 +340,8 @@
     </widget>
     <addaction name="actionLoad_GCode"/>
     <addaction name="menuRecent_Files"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_gcode"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
     <addaction name="actionClose_All"/>
@@ -408,9 +386,9 @@
     <string>Ctrl+Shift+W</string>
    </property>
   </action>
-  <action name="actionSlice_3D_model">
+  <action name="actionSave_gcode">
    <property name="text">
-    <string>FAKE</string>
+    <string>Save gcode</string>
    </property>
   </action>
  </widget>
