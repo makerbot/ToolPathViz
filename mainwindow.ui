@@ -261,20 +261,6 @@
         </property>
        </spacer>
       </item>
-      <item row="5" column="6">
-       <widget class="QRadioButton" name="radioButtonSurfs">
-        <property name="text">
-         <string>surface</string>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="7">
-       <widget class="QRadioButton" name="radioButtonFloors">
-        <property name="text">
-         <string>floor</string>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="6">
        <spacer name="horizontalSpacer_19">
         <property name="orientation">
@@ -288,30 +274,53 @@
         </property>
        </spacer>
       </item>
-      <item row="2" column="7">
-       <widget class="QRadioButton" name="radioButtonRoofs">
+      <item row="5" column="6">
+       <widget class="QCheckBox" name="checkBoxSurfs">
         <property name="text">
-         <string>roof</string>
+         <string>surfaces</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="7">
+       <widget class="QCheckBox" name="checkBoxRoofs">
+        <property name="text">
+         <string>roofs</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="7">
+       <widget class="QCheckBox" name="checkBoxFloors">
+        <property name="text">
+         <string>floors</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="8">
+       <widget class="QCheckBox" name="checkBoxLoops">
+        <property name="text">
+         <string>shells</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
       <item row="5" column="7">
-       <spacer name="horizontalSpacer_23">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="5" column="8">
-       <widget class="QRadioButton" name="radioButtonLoops">
+       <widget class="QCheckBox" name="checkBoxInfills">
         <property name="text">
-         <string>loop</string>
+         <string>infills</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

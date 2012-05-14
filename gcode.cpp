@@ -130,14 +130,39 @@ void layerMap::clear() {
     heights.clear();
 }
 
-gcodeModel::gcodeModel() {
+gcodeModel::gcodeModel()
+    :layerMeasure(0,0)
+{
     toolEnabled = false;
+    viewSurfs = true;
+    viewRoofs = true;
+    viewFloors =true;
+    viewLoops =true;
+    viewInfills = true;
+}
+
+gcodeModel::~gcodeModel()
+{
+    cout << "~gcodeModel()" << this << endl;
 }
 
 float gcodeModel::getModelZCenter() {
     return (zHeightBounds.getMax() - zHeightBounds.getMin())/2 + zHeightBounds.getMin();
 }
 
+
+void gcodeModel::saveMiracleGcode(const char *filename, void *prog)
+{
+
+    ProgressBar *progress = (ProgressBar *)prog;
+
+    cout << "gcodeModel::saveMiracleGcode: " << filename << endl;
+    std::ofstream gout(filename);
+    GCoder gcoder(gcoderCfg, progress);
+    gcoder.writeGcodeFile(slices, layerMeasure, gout, modelFile.c_str());
+    gout.close();
+
+}
 
 void gcodeModel::exportGCode(QString filename) {
     //Open the file that was specificied and create a stream to write to it.
@@ -287,7 +312,6 @@ void addPointsFromPolygons(const Polygons& polys, float xOff, float yOff, float 
     }
 }
 
-bool showSkeleton = true;
 
 void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid, float z, PointKind kind, float xOff, float yOff, vector<point> &points, layerMap& map)
 {
@@ -337,7 +361,7 @@ void gcodeModel::loadRegions(const Tomograph &tomograph, const mgl::Regions &reg
         float z = tomograph.layerMeasure.sliceIndexToHeight(i);
        // addPointsFromSurface(surface, skeleton.grid,  z, roofing, xOff, 0, points, map);
 
-        addPointsFromSurface(surface, tomograph.grid,  z, roofing, 0, yOff, points, map);
+        addPointsFromSurface(surface, tomograph.grid,  z, roofing, 0, -yOff, points, map);
     }
 
     for(size_t i=0; i< regions.floorings.size(); i++)
@@ -345,7 +369,7 @@ void gcodeModel::loadRegions(const Tomograph &tomograph, const mgl::Regions &reg
         const GridRanges &surface = regions.floorings[i];
         float z = tomograph.layerMeasure.sliceIndexToHeight(i);
      //   addPointsFromSurface(surface, skeleton.grid,  z, flooring, xOff, 0, points, map);
-        addPointsFromSurface(surface, tomograph.grid,  z, flooring,    0, -yOff, points, map);
+        addPointsFromSurface(surface, tomograph.grid,  z, flooring,    0, yOff, points, map);
     }
 
     for(size_t i=0; i < regions.flatSurfaces.size(); i++)
@@ -366,10 +390,9 @@ void gcodeModel::loadSliceData(const Tomograph& tomograph,
     map.clear();
     map.recordHeight(0);
 
-    if(showSkeleton)
-    {
-        loadRegions(tomograph, regions);
-    }
+
+    loadRegions(tomograph, regions);
+
 
     float feedrate = 2400;
     float flowrate = 4;
@@ -385,53 +408,51 @@ void gcodeModel::loadSliceData(const Tomograph& tomograph,
             const ExtruderSlice &slice = sliceData.extruderSlices[extruderId];
             float z = (float) sliceData.getZHeight();
 
-            //cout << "sazz "  <<endl;
+            // cout << "sazz "  <<endl;
             const Polygons &boundaries = slice.boundary;
             const Polygons &infills = slice.infills;
-            //cout << "slice " << slice.insetLoopsList.size() << endl;
-            //cout << "BOUNDARY COUNT " << boundary.size() << endl;
 
             // main view
             addPointsFromPolygons(boundaries, 0, 0, z,  perimeter, travel, 0, feedrate, flowrate, points, map);
             addPointsFromPolygons(infills, 0, 0, z, infill, travel, 0, feedrate, flowrate,  points, map);
 
-
             for(unsigned int j=0; j< slice.insetLoopsList.size(); j++)
             {
                 const Polygons& insetLoops = slice.insetLoopsList[j];
-
                 addPointsFromPolygons(insetLoops, 0, 0, z, shell, travel, j, feedrate, flowrate,  points, map);
             }
         }
     }
 
+//    if(viewLoops)
+//    {
+//        for (unsigned int i = 0; i < slices.size(); i++)
+//        {
+//            const SliceData &sliceData = slices[i];
+//            for(unsigned int extruderId = 0; extruderId < sliceData.extruderSlices.size(); extruderId++)
+//            {
+//                const ExtruderSlice &slice = sliceData.extruderSlices[extruderId];
+//                float z = (float) sliceData.getZHeight();
 
-    for (unsigned int i = 0; i < slices.size(); i++)
-    {
-        const SliceData &sliceData = slices[i];
-        for(unsigned int extruderId = 0; extruderId < sliceData.extruderSlices.size(); extruderId++)
-        {
-            const ExtruderSlice &slice = sliceData.extruderSlices[extruderId];
-            float z = (float) sliceData.getZHeight();
+//                //cout << "sazz "  <<endl;
+//                const Polygons &boundaries = slice.boundary;
+//                const Polygons &infills = slice.infills;
+//                //cout << "slice " << slice.insetLoopsList.size() << endl;
+//                //cout << "BOUNDARY COUNT " << boundary.size() << endl;
 
-            //cout << "sazz "  <<endl;
-            const Polygons &boundaries = slice.boundary;
-            const Polygons &infills = slice.infills;
-            //cout << "slice " << slice.insetLoopsList.size() << endl;
-            //cout << "BOUNDARY COUNT " << boundary.size() << endl;
+//                 // right side
+//                addPointsFromPolygons(boundaries, xOff, 0, z,  perimeter, invisible, 0, feedrate, flowrate, points, map);
 
-             // right side
-            addPointsFromPolygons(boundaries, xOff, 0, z,  perimeter, invisible, 0, feedrate, flowrate, points, map);
+//                for(unsigned int j=0; j< slice.insetLoopsList.size(); j++)
+//                {
+//                    const Polygons& insetLoops = slice.insetLoopsList[j];
+//                    // right side
+//                    addPointsFromPolygons(insetLoops, xOff, 0, z, shell, invisible, j, feedrate, flowrate,  points, map);
+//                }
+//            }
 
-            for(unsigned int j=0; j< slice.insetLoopsList.size(); j++)
-            {
-                const Polygons& insetLoops = slice.insetLoopsList[j];
-                // right side
-                addPointsFromPolygons(insetLoops, xOff, 0, z, shell, invisible, j, feedrate, flowrate,  points, map);
-            }
-        }
-
-    }
+//        }
+//    }
 
 }
 

@@ -62,6 +62,16 @@ private slots:
 
     void on_radioButtonSurfs_toggled(bool checked);
 
+    void on_checkBoxSurfs_toggled(bool checked);
+
+    void on_checkBoxRoofs_toggled(bool checked);
+
+    void on_checkBoxFloors_toggled(bool checked);
+
+    void on_checkBoxLoops_toggled(bool checked);
+
+    void on_checkBoxInfills_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
 

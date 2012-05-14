@@ -9,6 +9,8 @@
 #include <iostream>
 
 #include "mgl/pather.h"
+#include "mgl/miracle.h"
+#include "mgl/configuration.h"
 
 using namespace std;
 
@@ -149,6 +151,15 @@ class gcodeModel
 
     bool toolEnabled;
 public:
+
+    //mgl::Tomograph tomograph;
+    //mgl::Regions regions;
+    std::string modelFile;
+    mgl::GCoderConfig gcoderCfg;
+    std::vector<mgl::SliceData> slices;
+    mgl::LayerMeasure layerMeasure;
+
+
     vector<point> points;
     layerMap map;
     unsigned int getMapSize(){return  map.size();}
@@ -157,15 +168,26 @@ public:
     minMax<float> flowrateBounds;
     minMax<float> zHeightBounds;
 
+
+    bool viewSurfs;
+    bool viewRoofs;
+    bool viewFloors;
+    bool viewLoops;
+    bool viewInfills;
+
 public:
     gcodeModel();
+    ~gcodeModel();
 
     void loadSliceData(const mgl::Tomograph &tomograph, const mgl::Regions &regions, const std::vector<mgl::SliceData> &sliceData);
 
     void loadRegions(const mgl::Tomograph &tomograph, const mgl::Regions &regions);
 
     void loadGCode(QString filename);
+
     void exportGCode(QString filename);
+    void saveMiracleGcode(const char *filename, void *prog);
+
     float getModelZCenter();
 private:
     void loadGcodeLine(const char* lineStr);

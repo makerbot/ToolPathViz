@@ -18,6 +18,32 @@
 using namespace mgl;
 using namespace std;
 
+
+class Progress : public ProgressBar
+{
+    QLabel &taskLabel; QProgressBar& progress;
+public:
+    Progress(QLabel *taskLabelp, QProgressBar* progressp)
+        :taskLabel(*taskLabelp), progress(*progressp)
+    {
+
+    }
+
+    void onTick(const char* taskName, unsigned int count, unsigned int tick)
+    {
+        if(tick==0)
+        {
+            taskLabel.setText(taskName);
+            progress.setMinimum(0);
+            progress.setMaximum(count);
+
+        }
+        progress.setValue(tick+1);
+        // cout << taskName << " tick: " << tick << "/" << count << endl;
+    }
+};
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -256,29 +282,6 @@ void MainWindow::on_buttonSlice_clicked()
 
 void MainWindow::sliceModelAndCreateToolPaths()
 {
-    class Progress : public ProgressBar
-    {
-        QLabel &taskLabel; QProgressBar& progress;
-    public:
-        Progress(QLabel *taskLabelp, QProgressBar* progressp)
-            :taskLabel(*taskLabelp), progress(*progressp)
-        {
-
-        }
-
-        void onTick(const char* taskName, unsigned int count, unsigned int tick)
-        {
-            if(tick==0)
-            {
-                taskLabel.setText(taskName);
-                progress.setMinimum(0);
-                progress.setMaximum(count);
-
-            }
-            progress.setValue(tick+1);
-            // cout << taskName << " tick: " << tick << "/" << count << endl;
-        }
-    };
 
     try
     {
@@ -305,29 +308,37 @@ void MainWindow::sliceModelAndCreateToolPaths()
 
         Progress progress(ui->label_task, ui->progressBar);
 
-        Tomograph tomograph;
-        Regions regions;
+        Tomograph tomograph; // = ui->graphicsView->model.tomograph;
+        Regions regions; //  = ui->graphicsView->model.regions;
+
         std::vector<mgl::SliceData> slices;
+        slices.clear();
 
         Slicer slicer(slicerCfg, &progress);
         slicer.tomographyze(modelFile.c_str(), tomograph);
+        cout << "Slicer done" << endl;
 
         Regioner regioner(slicerCfg, &progress);
         regioner.generateSkeleton(tomograph, regions);
+        cout << "Regioner done" << endl;
 
         Pather pather(&progress);
         pather.generatePaths(tomograph, regions, slices);
+        cout << "Pather done" << endl;
 
-        std::ofstream gout(gcodeFile.c_str());
-        GCoder gcoder(gcoderCfg, &progress);
-        gcoder.writeGcodeFile(slices, tomograph.layerMeasure, gout, modelFile.c_str());
-        gout.close();
 
         ui->graphicsView->loadSliceData(tomograph, regions, slices);
         ui->LayerHeight->setMaximum(ui->graphicsView->model.getMapSize() );
         ui->LayerMin->setMaximum(ui->graphicsView->model.getMapSize() );
         ui->LayerMin->setValue(0 );
         ui->LayerHeight->setValue(0 );
+
+        // things we need to remember
+        ui->graphicsView->model.layerMeasure = tomograph.layerMeasure;
+        ui->graphicsView->model.slices = slices;
+        ui->graphicsView->model.gcoderCfg = gcoderCfg;
+        ui->graphicsView->model.modelFile = modelFile;
+
     }
     catch(mgl::Exception &mixup)
     {
@@ -384,10 +395,48 @@ void MainWindow::on_pushButtonSaveGcode_clicked()
 
 void MainWindow::on_actionSave_gcode_triggered()
 {
+
+    Progress progress(ui->label_task, ui->progressBar);
+
+
     cout << "hello on_actionSave_gcode_triggered save menu!" << endl;
+    QString filename = QFileDialog::getSaveFileName(this, tr("Export GCode"), QDir::currentPath(),  tr("GCode File (*.gcode)"));
+    cout << "SAVE into " << filename.toStdString() << endl;
+
+    ui->graphicsView->exportModel(filename, &progress);
 }
 
 void MainWindow::on_radioButtonSurfs_toggled(bool checked)
 {
     cout << "Toggle surfs" << endl;
+}
+
+void MainWindow::on_checkBoxSurfs_toggled(bool checked)
+{
+     cout << "Toggle surfs" << endl;
+     ui->graphicsView->toggleSurfs(checked);
+}
+
+void MainWindow::on_checkBoxRoofs_toggled(bool checked)
+{
+     cout << "Toggle roofs " <<checked << endl;
+     ui->graphicsView->toggleRoofs(checked);
+}
+
+void MainWindow::on_checkBoxFloors_toggled(bool checked)
+{
+    cout << "Toggle floors " <<checked << endl;
+    ui->graphicsView->toggleFLoors(checked);
+}
+
+void MainWindow::on_checkBoxLoops_toggled(bool checked)
+{
+    cout << "Toggle loops " <<checked << endl;
+    ui->graphicsView->toggleLoops(checked);
+}
+
+void MainWindow::on_checkBoxInfills_toggled(bool checked)
+{
+    cout << "Toggle infills " <<checked << endl;
+    ui->graphicsView->toggleInfills(checked);
 }

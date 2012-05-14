@@ -22,7 +22,10 @@ public:
     void loadSliceData(const mgl::Tomograph &tomograph, const  mgl::Regions &regions, const std::vector<mgl::SliceData> &sliceData);
 
     void loadModel(QString filename);
-    void exportModel (QString filename);
+    void exportModel (QString filename, void *progress);
+
+
+
     bool hasModel();
 
     void setupViewport(int width, int height);
@@ -32,6 +35,13 @@ public:
     void panY(float amount);
     void setMaximumVisibleLayer(int layer);
     void setMinimumVisibleLayer(int layer);
+
+    void toggleRoofs(bool v);
+    void toggleFLoors(bool v);
+    void toggleLoops(bool v);
+    void toggleSurfs(bool v);
+    void toggleInfills(bool v);
+
 protected:
     void initializeGL();
     void resizeGL(int w, int h);

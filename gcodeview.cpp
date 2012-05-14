@@ -9,6 +9,8 @@
 
 using namespace std;
 
+
+
 static void qNormalizeAngle(int &angle)
 {
     while (angle < 0)
@@ -169,6 +171,7 @@ void GcodeView::paintGLgcode()
             red = 1;
             green = 1;
             blue = 0;
+            if(!model.viewInfills)alpha=0;
             break;
           case shell:
             if(b.nb ==0)
@@ -198,22 +201,24 @@ void GcodeView::paintGLgcode()
                     }
                 }
             }
-
+            if(!model.viewLoops)alpha = 0;
             break;
           case perimeter:
             blue = 0.5;
             red = 0.5;
             green = 0.5;
+
             break;
 
           case surface:
-
               green = 0.5;
               alpha *= 0.5;
+              if(!model.viewSurfs)alpha = 0;
               break;
 
           case roofing:
               red = 1;
+              if(!model.viewRoofs)alpha = 0;
 //            blue =0;
 //            green = b.nb==1?1:0;
 //            red = b.nb == 0?1:0;
@@ -223,6 +228,7 @@ void GcodeView::paintGLgcode()
           blue = 1;
           //green = b.nb == 1?0.75:0;
           //red   = b.nb == 0?0.75:0;
+          if(!model.viewFloors)alpha = 0;
           break;
           default:
             green = 1;
@@ -259,8 +265,9 @@ void GcodeView::loadModel(QString filename) {
     updateGL();
 }
 
-void GcodeView::exportModel(QString filename) {
-    model.exportGCode(filename);
+void GcodeView::exportModel(QString filename, void *progress) {
+    // model.exportGCode(filename);
+    model.saveMiracleGcode(filename.toAscii(), progress);
 }
 
 bool GcodeView::hasModel() {
@@ -296,7 +303,6 @@ void GcodeView::wheelEvent(QWheelEvent *event)
 {
     float newScale = scale*(1 + event->delta()/400.0);
     scale = newScale;
-
     updateGL();
 }
 
@@ -313,6 +319,37 @@ void GcodeView::panX(float amount){
 
 void GcodeView::panY(float amount){
     pan_y = pan_y + amount;
+    updateGL();
+}
+
+void GcodeView::toggleRoofs(bool v)
+{
+    model.viewRoofs = v;
+    updateGL();
+}
+
+void GcodeView::toggleFLoors(bool v)
+{
+     model.viewFloors= v;
+     updateGL();
+}
+
+void GcodeView::toggleLoops(bool v)
+{
+     model.viewLoops = v;
+     updateGL();
+
+}
+void GcodeView::toggleInfills(bool v)
+{
+    model.viewInfills = v;
+    updateGL();
+}
+
+void GcodeView::toggleSurfs(bool v)
+{
+    model.viewSurfs = v;
+    cout << "model.viewSurfs " << model.viewSurfs << endl;
     updateGL();
 }
 
