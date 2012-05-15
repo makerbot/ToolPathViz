@@ -147,7 +147,8 @@ void Arcball::mouse_up()
 
 /********************************** Arcball::mouse_motion() **********/
 
-void Arcball::mouse_motion(int x, int y, int shift, int ctrl, int alt)
+void Arcball::mouse_motion(int x, int y, int , //shift,
+                           int ctrl, int alt)
 {
     /* Set the X constraint if CONTROL key is pressed, Y if ALT key */
     set_constraints( ctrl != 0, alt != 0 );

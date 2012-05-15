@@ -50,17 +50,17 @@ private slots:
 
     void on_buttonSlice_clicked();
 
-    void on_LayerMin_destroyed(QObject *arg1);
+    // void on_LayerMin_destroyed(QObject *arg1);
 
     void on_LayerMin_valueChanged(int value);
 
-    void on_actionSaveGcode_triggered();
+    // void on_actionSaveGcode_triggered();
 
     void on_pushButtonSaveGcode_clicked();
 
     void on_actionSave_gcode_triggered();
 
-    void on_radioButtonSurfs_toggled(bool checked);
+
 
     void on_checkBoxSurfs_toggled(bool checked);
 

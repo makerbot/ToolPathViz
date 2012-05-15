@@ -290,7 +290,7 @@ void GcodeView::mouseMoveEvent(QMouseEvent *event)
 
 }
 
-void GcodeView::mouseReleaseEvent(QMouseEvent *event) {
+void GcodeView::mouseReleaseEvent(QMouseEvent *) {
     arcball.mouse_up();
 
     // Start an animation timer if the arcball is still spinning
@@ -353,7 +353,7 @@ void GcodeView::toggleSurfs(bool v)
     updateGL();
 }
 
-void GcodeView::mouseDoubleClickEvent(QMouseEvent event) {
+void GcodeView::mouseDoubleClickEvent(QMouseEvent ) {
     // TODO: We never get here.
     resetView();
     updateGL();

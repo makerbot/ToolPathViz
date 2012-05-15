@@ -377,15 +377,6 @@ void MainWindow::loadFile(const QString &fileName) {
 
 }
 
-void MainWindow::on_LayerMin_destroyed(QObject *arg1)
-{
-
-}
-
-void MainWindow::on_actionSaveGcode_triggered()
-{
-    cout << "hello save menu!" << endl;
-}
 
 
 void MainWindow::on_pushButtonSaveGcode_clicked()
@@ -404,11 +395,6 @@ void MainWindow::on_actionSave_gcode_triggered()
     cout << "SAVE into " << filename.toStdString() << endl;
 
     ui->graphicsView->exportModel(filename, &progress);
-}
-
-void MainWindow::on_radioButtonSurfs_toggled(bool checked)
-{
-    cout << "Toggle surfs" << endl;
 }
 
 void MainWindow::on_checkBoxSurfs_toggled(bool checked)

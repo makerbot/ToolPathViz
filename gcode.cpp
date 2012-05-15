@@ -286,8 +286,14 @@ void gcodeModel::loadGcodeLine(const char* lineStr)
 
 
 
-void addPointsFromPolygon(const Polygon &poly, float xOff, float yOff, float z, PointKind kind, int nb, float feedrate, float flowrate, vector<point> &points, layerMap& map)
+void addPointsFromPolygon(const Polygon &poly,
+                          float xOff,
+                          float yOff,
+                          float z,
+                          PointKind kind, int nb, float feedrate, float flowrate, vector<point> &points,
+                          layerMap& )
 {
+
     for(unsigned int i=0; i < poly.size(); i++)
     {
         Vector2 p = poly[i];
@@ -317,8 +323,6 @@ void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid, float
 {
     float feedrate = 10;
     float flowrate = 5;
-    int nb =0;
-
 
 
     map.recordHeight(z);
@@ -399,7 +403,6 @@ void gcodeModel::loadSliceData(const Tomograph& tomograph,
     feedrateBounds.evaluate(feedrate);
     flowrateBounds.evaluate(flowrate);
 
-    float xOff = -1.1 * tomograph.grid.readXvalues()[0] + tomograph.grid.readXvalues().back();
     for (unsigned int i = 0; i < slices.size(); i++)
     {
         const SliceData &sliceData = slices[i];
@@ -466,9 +469,8 @@ void gcodeModel::loadGCode(QString q)
     string extension = filename.substr(filename.find_last_of('.'), filename.size());
     std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
     cout << "extension "<< extension << endl;
-    int r = extension.find("stl");
 
-    if(extension.find("gcode") >= 0)
+    if(extension.find("gcode") != string::npos)
     {
         cout << "loading gcode: " << filename << endl;
         ifstream file;
