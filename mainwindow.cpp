@@ -269,14 +269,16 @@ void MainWindow::on_buttonConfigBrowse_clicked()
 void MainWindow::on_button3dModelBrowse_clicked()
 {
     QString fileName;
-    fileName = QFileDialog::getOpenFileName(this, tr("Open File"), "", tr("3D models (*.stl)") );
+
+    string modelFile = ui->lineEdit3dModelFile->text().toStdString();
+
+    MyComputer computer;
+    string dir = computer.fileSystem.ExtractDirectory(modelFile.c_str());
+
+    fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QString(dir.c_str()), tr("3D models (*.stl)") );
+
     ui->lineEdit3dModelFile->setText(fileName);
     sliceModelAndCreateToolPaths();
-}
-
-void MainWindow::on_buttonSlice_clicked()
-{
-
 }
 
 

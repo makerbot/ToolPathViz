@@ -48,13 +48,8 @@ private slots:
 
     void on_button3dModelBrowse_clicked();
 
-    void on_buttonSlice_clicked();
-
-    // void on_LayerMin_destroyed(QObject *arg1);
 
     void on_LayerMin_valueChanged(int value);
-
-    // void on_actionSaveGcode_triggered();
 
     void on_pushButtonSaveGcode_clicked();
 
