@@ -39,6 +39,7 @@ public:
 
         }
         progress.setValue(tick+1);
+        qApp->processEvents();
         // cout << taskName << " tick: " << tick << "/" << count << endl;
     }
 };
