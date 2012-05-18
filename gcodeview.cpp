@@ -276,14 +276,21 @@ bool GcodeView::hasModel() {
 
 void GcodeView::mousePressEvent(QMouseEvent *event)
 {
-    arcball.mouse_down(event->x(), height() - event->y());
+    int x = event->x();
+    int y = height() - event->y();
+    cout << "mousePressEvent (x,y) = " << x << ", " << y << endl;
+    arcball.mouse_down(x,y);
 //    lastPos = event->pos();
 }
 
 void GcodeView::mouseMoveEvent(QMouseEvent *event)
 {
     // TODO: send key states too?
-    arcball.mouse_motion(event->x(), height() - event->y());
+    int x = event->x();
+    int h = height();
+    int y =  h - event->y();
+    cout << "mouseMoveEvent (x,y) = " << x << ", " << y << endl;
+    arcball.mouse_motion(x,y);
 
     updateGL();
 

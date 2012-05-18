@@ -30,9 +30,10 @@
 **********************************************************************/
 
 #include "arcball.h"
-
 #include <cstdio>
+#include <iostream>
 
+using namespace std;
 
 /**************************************** Arcball::Arcball() ****/
 /* Default (void) constructor for Arcball                         */
@@ -41,26 +42,27 @@ Arcball::Arcball()
 {
     rot_ptr = &rot;
     init();
+
 }
 
 /**************************************** Arcball::Arcball() ****/
 /* Takes as argument a mat4 to use instead of the internal rot  */
 
-Arcball::Arcball(mat4 *mtx) 
-{
-    rot_ptr = mtx;
-}
+//Arcball::Arcball(mat4 *mtx)
+//{
+//    rot_ptr = mtx;
+//}
 
 
 /**************************************** Arcball::Arcball() ****/
 /* A constructor that accepts the screen center and arcball radius*/
 
-Arcball::Arcball(const vec2 &_center, float _radius)
-{
-    rot_ptr = &rot;
-    init();
-    set_params(_center, _radius);
-}
+//Arcball::Arcball(const vec2 &_center, float _radius)
+//{
+//    rot_ptr = &rot;
+//    init();
+//    set_params(_center, _radius);
+//}
 
 
 /************************************** Arcball::set_params() ****/
@@ -77,14 +79,26 @@ void Arcball::init()
 {
     center.set( 0.0, 0.0 );
     radius         = 1.0;
-    q_now          = quat_identity();
-    *rot_ptr       = identity3D();
-    q_increment    = quat_identity();
-    rot_increment  = identity3D();
-    is_mouse_down  = false;
-    is_spinning    = false;
     damp_factor    = 0.0;
+    is_mouse_down  = false;
+    q_now          = quat_identity();
+
+    // q_down q_drag
+
+    q_increment    = quat_identity();
+
+    // rot
+    rot_increment  = identity3D();
+    *rot_ptr       = identity3D();
+
+    is_spinning    = false;
+
+
+    //    bool  constraint_x, constraint_y;
     zero_increment = true;
+ //    int   is_spinning;
+
+    cout << "Arcball::init" << endl;
 }
 
 /*********************************** Arcball::mouse_to_sphere() ****/

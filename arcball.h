@@ -62,9 +62,23 @@
 class Arcball 
 {
 public:
+
+    int   is_mouse_down;  /* true for down, false for up */
+    quat  q_now, q_down, q_drag, q_increment;
+    vec2  down_pt;
+    mat4  rot, rot_increment;
+    mat4  *rot_ptr;
+
+    bool  constraint_x, constraint_y;
+    vec2  center;
+    float radius, damp_factor;
+    int   zero_increment;
+    int   is_spinning;
+
+
     Arcball();
-    Arcball(mat4 *mtx);
-    Arcball(const vec2 &center, float radius);
+   // Arcball(mat4 *mtx);
+   // Arcball(const vec2 &center, float radius);
 
     void  set_damping(float d);
     void  idle();
@@ -81,17 +95,7 @@ public:
     vec3  mouse_to_sphere(const vec2 &p);
  
   //public:
-    int   is_mouse_down;  /* true for down, false for up */
-    int   is_spinning;
-    quat  q_now, q_down, q_drag, q_increment;
-    vec2  down_pt;
-    mat4  rot, rot_increment;
-    mat4  *rot_ptr;
 
-    bool  constraint_x, constraint_y;
-    vec2  center;
-    float radius, damp_factor;
-    int   zero_increment;
 };
 
 #endif
