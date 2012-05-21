@@ -222,7 +222,7 @@ void gcodeModel::loadGcodeLine(const char* lineStr)
         float yPos = FLT_MIN;
         float zPos = FLT_MIN;
 
-        PointKind kind = infill;
+        PointKind kind = infill; // by default, use yellow
         int nb = 0;
 
         // cout << " hascodeG:" << code.hasCode('G') << std::endl;
