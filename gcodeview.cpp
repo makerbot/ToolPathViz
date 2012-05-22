@@ -156,9 +156,6 @@ void GcodeView::paintGLgcode()
 
          }
 
-
-
-
         switch (b.kind) {
         case invisible:
           alpha = 0;

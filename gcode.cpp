@@ -465,6 +465,7 @@ void gcodeModel::loadGCode(QString q)
 
 
     cout << "loadGCode: " << filename << endl;
+    if(filename.size() ==0) return;
 
     string extension = filename.substr(filename.find_last_of('.'), filename.size());
     std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);

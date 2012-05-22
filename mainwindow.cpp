@@ -101,8 +101,11 @@ void MainWindow::on_actionLoad_GCode_triggered()
                                                    tr("GCode (*.gcode)") //  tr("3D Models (*.stl);;GCode (*.gcode)")
                                                     );
     }
-    GCodeViewApplication::LoadFile(fileName);
-    setCurrentFile(fileName);
+    if(fileName.size())
+    {
+        GCodeViewApplication::LoadFile(fileName);
+        setCurrentFile(fileName);
+    }
 }
 
 // TODO: Move this to the app class
@@ -217,26 +220,6 @@ void MainWindow::on_actionClose_triggered()
 
     // TODO: Can the application get a signal when this happens, instead of sending it explicitly here?
 }
-
-void MainWindow::on_actionExport_Gcode_File_triggered()
-{
-    static std::string configFile;
-    if(configFile.size()==0)
-    {
-        configFile = QDir::currentPath().toStdString();
-        configFile += "/miracle.config";
-    }
-    static std::string modelFile;
-
-    // QString filename = QFileDialog::getSaveFileName(this, tr("Export GCode"), QDir::currentPath(),  tr("GCode File (*.gcode)"));
-    // ui->graphicsView->exportModel(filename);
-
-    //SlicingDialog *dlg = new SlicingDialog;
-    //dlg->show();
-
-    // dlg->init("miracle.config", "3D_Knot.stl");
-}
-
 
 
 void MainWindow::on_panLeft_clicked()
@@ -380,12 +363,6 @@ void MainWindow::loadFile(const QString &fileName) {
 
 }
 
-
-
-void MainWindow::on_pushButtonSaveGcode_clicked()
-{
-    cout << "hello save button!" << endl;
-}
 
 void MainWindow::on_actionSave_gcode_triggered()
 {

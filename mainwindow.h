@@ -31,7 +31,6 @@ private slots:
     void openRecentFile();
     void on_actionClose_triggered();
 
-    void on_actionExport_Gcode_File_triggered();
 
     void on_zoomIn_clicked();
     void on_zoomOut_clicked();
@@ -50,8 +49,6 @@ private slots:
 
 
     void on_LayerMin_valueChanged(int value);
-
-    void on_pushButtonSaveGcode_clicked();
 
     void on_actionSave_gcode_triggered();
 
