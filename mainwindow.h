@@ -45,7 +45,7 @@ private slots:
 
     void on_buttonConfigBrowse_clicked();
 
-    void on_button3dModelBrowse_clicked();
+   // void on_button3dModelBrowse_clicked();
 
 
     void on_LayerMin_valueChanged(int value);
@@ -64,6 +64,8 @@ private slots:
 
     void on_checkBoxInfills_toggled(bool checked);
 
+    void on_actionOpen_3D_model_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -76,7 +78,7 @@ private:
     enum { MaxRecentFiles = 10 };
     QAction *recentFileActs[MaxRecentFiles];
 
-    void sliceModelAndCreateToolPaths();
+    void sliceModelAndCreateToolPaths(const char* filename);
 };
 
 #endif // MAINWINDOW_H

@@ -10,7 +10,6 @@ GCodeViewApplication::GCodeViewApplication(int argc, char *argv[]) :
 
 
 void GCodeViewApplication::LoadFile(QString fileName) {
-    // TODO: Check if this file has been loaded before attempting to load it again.
 
     MainWindow *targetWindow = NULL;
 

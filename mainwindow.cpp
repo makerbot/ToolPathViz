@@ -98,7 +98,7 @@ void MainWindow::on_actionLoad_GCode_triggered()
     {
         fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
                                                 "",//"/home",
-                                                   tr("GCode (*.gcode)") //  tr("3D Models (*.stl);;GCode (*.gcode)")
+                                                   tr("3D Models (*.stl);;GCode (*.gcode)") // tr("GCode (*.gcode)")
                                                     );
     }
     if(fileName.size())
@@ -250,32 +250,31 @@ void MainWindow::on_buttonConfigBrowse_clicked()
 
 }
 
-void MainWindow::on_button3dModelBrowse_clicked()
+//void MainWindow::on_button3dModelBrowse_clicked()
+//{
+//    QString fileName;
+
+//    string modelFile = ui->lineEdit3dModelFile->text().toStdString();
+
+//    MyComputer computer;
+//    string dir = computer.fileSystem.ExtractDirectory(modelFile.c_str());
+
+//    fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QString(dir.c_str()), tr("3D models (*.stl)") );
+
+//    ui->lineEdit3dModelFile->setText(fileName);
+//    sliceModelAndCreateToolPaths(fileName.toAscii());
+//}
+
+
+void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
 {
-    QString fileName;
-
-    string modelFile = ui->lineEdit3dModelFile->text().toStdString();
-
-    MyComputer computer;
-    string dir = computer.fileSystem.ExtractDirectory(modelFile.c_str());
-
-    fileName = QFileDialog::getOpenFileName(this, tr("Open File"), QString(dir.c_str()), tr("3D models (*.stl)") );
-
-    ui->lineEdit3dModelFile->setText(fileName);
-    sliceModelAndCreateToolPaths();
-}
-
-
-void MainWindow::sliceModelAndCreateToolPaths()
-{
-
     try
     {
         cout << "Output file: ";
         MyComputer computer;
 
         string configFileName = ui->lineEditConfigFile->text().toStdString();
-        string modelFile = ui->lineEdit3dModelFile->text().toStdString();
+        string modelFile = modelpath; //ui->lineEdit3dModelFile->text().toStdString();
 
         string gcodeFile = computer.fileSystem.ChangeExtension(computer.fileSystem.ExtractFilename(modelFile.c_str()).c_str(), ".gcode" );
         cout << gcodeFile << endl;
@@ -294,8 +293,8 @@ void MainWindow::sliceModelAndCreateToolPaths()
 
         Progress progress(ui->label_task, ui->progressBar);
 
-        Tomograph tomograph; // = ui->graphicsView->model.tomograph;
-        Regions regions; //  = ui->graphicsView->model.regions;
+        Tomograph tomograph; 	// = ui->graphicsView->model.tomograph;
+        Regions regions; 		//  = ui->graphicsView->model.regions;
 
         std::vector<mgl::SliceData> slices;
         slices.clear();
@@ -312,19 +311,17 @@ void MainWindow::sliceModelAndCreateToolPaths()
         pather.generatePaths(tomograph, regions, slices);
         cout << "Pather done" << endl;
 
-
         ui->graphicsView->loadSliceData(tomograph, regions, slices);
-        ui->LayerHeight->setMaximum(ui->graphicsView->model.getMapSize() );
-        ui->LayerMin->setMaximum(ui->graphicsView->model.getMapSize() );
-        ui->LayerMin->setValue(0 );
-        ui->LayerHeight->setValue(0 );
+        ui->LayerHeight->setMaximum(ui->graphicsView->model.getMapSize());
+        ui->LayerMin->setMaximum(ui->graphicsView->model.getMapSize());
+        ui->LayerMin->setValue(0);
+        ui->LayerHeight->setValue(0);
 
         // things we need to remember
         ui->graphicsView->model.layerMeasure = tomograph.layerMeasure;
         ui->graphicsView->model.slices = slices;
         ui->graphicsView->model.gcoderCfg = gcoderCfg;
         ui->graphicsView->model.modelFile = modelFile;
-
     }
     catch(mgl::Exception &mixup)
     {
@@ -332,7 +329,6 @@ void MainWindow::sliceModelAndCreateToolPaths()
         QMessageBox &box = *new QMessageBox();
         box.setText(mixup.error.c_str());
         box.show();
-
     }
     catch(...)
     {
@@ -340,27 +336,34 @@ void MainWindow::sliceModelAndCreateToolPaths()
     }
 }
 
-void MainWindow::loadFile(const QString &fileName) {
+void MainWindow::loadFile(const QString &fileName)
+{
     setWindowTitle(strippedName(fileName));
+
 
     QAction* closeMenu = ui->menuBar->findChild<QAction *>("actionClose");
     if (closeMenu) {
         closeMenu->setText("Close \"" + fileName + "\"");
     }
-    else {
-        //std::cout << "no menu?" << std::endl;
+
+    std::string x(fileName.toAscii());
+
+    std::string ex = x.substr(x.find_last_of('.'), ex.size()-1);
+
+    if( (ex == ".stl") ||  (ex == ".STL") )
+    {
+        cout << "STL!!!" << ex << endl;
+        sliceModelAndCreateToolPaths(fileName.toAscii());
     }
+    else
+    {
+        ui->graphicsView->loadModel(fileName);
+        ui->LayerHeight->setMaximum(ui->graphicsView->model.getMapSize() );
+        ui->LayerMin->setMaximum(ui->graphicsView->model.getMapSize() );
+        ui->LayerMin->setValue(0 );
+        ui->LayerHeight->setValue(0 );
 
-    // TODO: How to back off here if model load failed? Should we close the window, etc?
-    // TODO: Do loading in background task...
-
-    ui->graphicsView->loadModel(fileName);
-
-    ui->LayerHeight->setMaximum(ui->graphicsView->model.getMapSize() );
-    ui->LayerMin->setMaximum(ui->graphicsView->model.getMapSize() );
-    ui->LayerMin->setValue(0 );
-    ui->LayerHeight->setValue(0 );
-
+    }
 }
 
 
@@ -405,4 +408,21 @@ void MainWindow::on_checkBoxInfills_toggled(bool checked)
 {
     cout << "Toggle infills " <<checked << endl;
     ui->graphicsView->toggleInfills(checked);
+}
+
+void MainWindow::on_actionOpen_3D_model_triggered()
+{
+    cout << "OPEN!" << endl;
+    QString fileName;
+    {
+        fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
+                                                "",//"/home",
+                                                   tr("GCode (*.stl)") //  tr("3D Models (*.stl);;GCode (*.gcode)")
+                                                    );
+    }
+    if(fileName.size())
+    {
+        GCodeViewApplication::LoadFile(fileName);
+        setCurrentFile(fileName);
+    }
 }

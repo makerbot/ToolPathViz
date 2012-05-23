@@ -204,27 +204,10 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="2">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>3D model:</string>
-        </property>
-       </widget>
-      </item>
       <item row="7" column="3">
        <widget class="QProgressBar" name="progressBar">
         <property name="value">
          <number>24</number>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="3">
-       <widget class="QLineEdit" name="lineEdit3dModelFile"/>
-      </item>
-      <item row="5" column="4">
-       <widget class="QPushButton" name="button3dModelBrowse">
-        <property name="text">
-         <string>...</string>
         </property>
        </widget>
       </item>
@@ -280,7 +263,7 @@
          <string>surfaces</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -290,7 +273,7 @@
          <string>roofs</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -300,7 +283,7 @@
          <string>floors</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -321,6 +304,23 @@
         </property>
         <property name="checked">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="3">
+       <widget class="QSpinBox" name="spinBoxShells">
+        <property name="minimum">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <number>42</number>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Shells:</string>
         </property>
        </widget>
       </item>
@@ -350,6 +350,7 @@
     <addaction name="actionLoad_GCode"/>
     <addaction name="menuRecent_Files"/>
     <addaction name="separator"/>
+    <addaction name="actionOpen_3D_model"/>
     <addaction name="actionSave_gcode"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
@@ -398,6 +399,11 @@
   <action name="actionSave_gcode">
    <property name="text">
     <string>Save gcode</string>
+   </property>
+  </action>
+  <action name="actionOpen_3D_model">
+   <property name="text">
+    <string>Open 3D model...</string>
    </property>
   </action>
  </widget>
