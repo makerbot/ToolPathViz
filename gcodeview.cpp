@@ -275,7 +275,7 @@ void GcodeView::mousePressEvent(QMouseEvent *event)
 {
     int x = event->x();
     int y = height() - event->y();
-    cout << "mousePressEvent (x,y) = " << x << ", " << y << endl;
+//    cout << "mousePressEvent (x,y) = " << x << ", " << y << endl;
     arcball.mouse_down(x,y);
 //    lastPos = event->pos();
 }
@@ -288,10 +288,7 @@ void GcodeView::mouseMoveEvent(QMouseEvent *event)
     int y =  h - event->y();
     cout << "mouseMoveEvent (x,y) = " << x << ", " << y << endl;
     arcball.mouse_motion(x,y);
-
     updateGL();
-
-
 }
 
 void GcodeView::mouseReleaseEvent(QMouseEvent *) {
@@ -367,7 +364,7 @@ void GcodeView::setMinimumVisibleLayer(int layer)
 {
     if (layer >=0 && layer < model.map.size()) {
         minVisibleLayer = layer;
-        std::cout << "Minimum visible layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
+       // std::cout << "Minimum visible layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
         updateGL();
     }
 }
@@ -375,7 +372,7 @@ void GcodeView::setMinimumVisibleLayer(int layer)
 void GcodeView::setMaximumVisibleLayer(int layer) {
     if (layer < model.map.size()) {
         maxVisibleLayer = layer;
-        std::cout << "Maximum visible layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
+       // std::cout << "Maximum visible layer: " << layer << ", height: " << model.map.getLayerHeight(layer) << std::endl;
         updateGL();
     }
 }

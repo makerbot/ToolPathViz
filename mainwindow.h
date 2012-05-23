@@ -66,6 +66,8 @@ private slots:
 
     void on_actionOpen_3D_model_triggered();
 
+    void on_pushButtonSlice_clicked();
+
 private:
     Ui::MainWindow *ui;
 

@@ -114,19 +114,6 @@
         </property>
        </spacer>
       </item>
-      <item row="5" column="5">
-       <spacer name="horizontalSpacer_17">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="7" column="5">
        <spacer name="horizontalSpacer_18">
         <property name="orientation">
@@ -217,19 +204,6 @@
          <string/>
         </property>
        </widget>
-      </item>
-      <item row="7" column="4">
-       <spacer name="horizontalSpacer_7">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item row="7" column="6">
        <spacer name="horizontalSpacer_12">
@@ -324,6 +298,27 @@
         </property>
        </widget>
       </item>
+      <item row="7" column="4">
+       <widget class="QPushButton" name="pushButtonSlice">
+        <property name="text">
+         <string>Slice!</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="4">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Infill density:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="5">
+       <widget class="QLineEdit" name="lineEditDensity">
+        <property name="text">
+         <string>0.25</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -350,7 +345,6 @@
     <addaction name="actionLoad_GCode"/>
     <addaction name="menuRecent_Files"/>
     <addaction name="separator"/>
-    <addaction name="actionOpen_3D_model"/>
     <addaction name="actionSave_gcode"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
@@ -369,7 +363,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionLoad_GCode">
    <property name="text">
-    <string>Open gcode file...</string>
+    <string>Open file...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -399,11 +393,6 @@
   <action name="actionSave_gcode">
    <property name="text">
     <string>Save gcode</string>
-   </property>
-  </action>
-  <action name="actionOpen_3D_model">
-   <property name="text">
-    <string>Open 3D model...</string>
    </property>
   </action>
  </widget>

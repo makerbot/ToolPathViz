@@ -291,13 +291,20 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
         SlicerConfig slicerCfg;
         loadSlicerConfigFromFile(config, slicerCfg);
 
+        int shells = ui->spinBoxShells->value();
+
+        double density = atof(ui->lineEditDensity->text().toAscii());
+        slicerCfg.infillDensity = density;
+
+        slicerCfg.nbOfShells = shells;
+        cout << "Shells  " << slicerCfg.nbOfShells << endl;
+        cout << "Density " << slicerCfg.infillDensity << endl;
+
         Progress progress(ui->label_task, ui->progressBar);
 
         Tomograph tomograph; 	// = ui->graphicsView->model.tomograph;
         Regions regions; 		//  = ui->graphicsView->model.regions;
-
         std::vector<mgl::SliceData> slices;
-        slices.clear();
 
         Slicer slicer(slicerCfg, &progress);
         slicer.tomographyze(modelFile.c_str(), tomograph);
@@ -369,14 +376,10 @@ void MainWindow::loadFile(const QString &fileName)
 
 void MainWindow::on_actionSave_gcode_triggered()
 {
-
     Progress progress(ui->label_task, ui->progressBar);
-
-
     cout << "hello on_actionSave_gcode_triggered save menu!" << endl;
     QString filename = QFileDialog::getSaveFileName(this, tr("Export GCode"), QDir::currentPath(),  tr("GCode File (*.gcode)"));
     cout << "SAVE into " << filename.toStdString() << endl;
-
     ui->graphicsView->exportModel(filename, &progress);
 }
 
@@ -425,4 +428,10 @@ void MainWindow::on_actionOpen_3D_model_triggered()
         GCodeViewApplication::LoadFile(fileName);
         setCurrentFile(fileName);
     }
+}
+
+void MainWindow::on_pushButtonSlice_clicked()
+{
+    // ui->graphicsView->model.modelFile
+    sliceModelAndCreateToolPaths(ui->graphicsView->model.modelFile.c_str());
 }
