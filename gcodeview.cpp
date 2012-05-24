@@ -57,10 +57,13 @@ void GcodeView::initializeGL()
 {
     // Set up the rendering context, define display lists etc.:
     glClearColor(0.0, 0.0, 0.0, 0.0);
-    glDisable(GL_DEPTH_TEST);
 
+    // glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
     glEnable (GL_BLEND);
+
+
+
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 

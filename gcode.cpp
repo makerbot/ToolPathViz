@@ -328,7 +328,7 @@ void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid, float
     map.recordHeight(z);
     for(size_t i=0; i < gridRanges.xRays.size(); i++)
     {
-        float y = grid.readYvalues()[i];
+        float y = grid.getYValues()[i];
         const std::vector<ScalarRange>  &line = gridRanges.xRays[i];
         for(size_t j=0; j < line.size(); j++)
         {
@@ -341,7 +341,7 @@ void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid, float
 
     for(size_t i=0; i < gridRanges.yRays.size(); i++)
     {
-        float x = grid.readXvalues()[i];
+        float x = grid.getXValues()[i];
         const std::vector<ScalarRange>  &line = gridRanges.yRays[i];
         for(size_t j=0; j < line.size(); j++)
         {
@@ -356,8 +356,8 @@ void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid, float
 
 void gcodeModel::loadRegions(const Tomograph &tomograph, const mgl::Regions &regions)
 {
-    float xOff = 3 * tomograph.grid.readXvalues()[0] + tomograph.grid.readXvalues().back();
-    float yOff = 3 * tomograph.grid.readYvalues()[0] + tomograph.grid.readYvalues().back();
+    float xOff = 3 * tomograph.grid.getXValues()[0] + tomograph.grid.getXValues().back();
+    float yOff = 3 * tomograph.grid.getYValues()[0] + tomograph.grid.getYValues().back();
 
     for(size_t i=0; i<regions.roofings.size(); i++)
     {
