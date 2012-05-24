@@ -118,11 +118,6 @@ void GcodeView::paintGLgcode()
     glBegin(GL_LINE_STRIP);
 
 
-
-
-
-
-
     for (unsigned int i = 1; i < model.getPointCount(); i++) {
 
         float red=0;
@@ -244,7 +239,6 @@ void GcodeView::paintGLgcode()
     }
 
     glEnd( );
-
     glPopMatrix();
 }
 
@@ -286,7 +280,7 @@ void GcodeView::mouseMoveEvent(QMouseEvent *event)
     int x = event->x();
     int h = height();
     int y =  h - event->y();
-    cout << "mouseMoveEvent (x,y) = " << x << ", " << y << endl;
+    // cout << "mouseMoveEvent (x,y) = " << x << ", " << y << endl;
     arcball.mouse_motion(x,y);
     updateGL();
 }

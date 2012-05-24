@@ -134,9 +134,9 @@ gcodeModel::gcodeModel()
     :layerMeasure(0,0)
 {
     toolEnabled = false;
-    viewSurfs = true;
-    viewRoofs = true;
-    viewFloors =true;
+    viewSurfs = false;
+    viewRoofs = false;
+    viewFloors =false;
     viewLoops =true;
     viewInfills = true;
 }
@@ -363,8 +363,6 @@ void gcodeModel::loadRegions(const Tomograph &tomograph, const mgl::Regions &reg
     {
         const GridRanges &surface = regions.roofings[i];
         float z = tomograph.layerMeasure.sliceIndexToHeight(i);
-       // addPointsFromSurface(surface, skeleton.grid,  z, roofing, xOff, 0, points, map);
-
         addPointsFromSurface(surface, tomograph.grid,  z, roofing, 0, -yOff, points, map);
     }
 
@@ -372,8 +370,14 @@ void gcodeModel::loadRegions(const Tomograph &tomograph, const mgl::Regions &reg
     {
         const GridRanges &surface = regions.floorings[i];
         float z = tomograph.layerMeasure.sliceIndexToHeight(i);
-     //   addPointsFromSurface(surface, skeleton.grid,  z, flooring, xOff, 0, points, map);
-        addPointsFromSurface(surface, tomograph.grid,  z, flooring,    0, yOff, points, map);
+        addPointsFromSurface(surface, tomograph.grid,  z, flooring,    0, -yOff, points, map);
+    }
+
+    for(size_t i=0; i< regions.solids.size(); i++)
+    {
+        const GridRanges &solid = regions.solids[i];
+        float z = tomograph.layerMeasure.sliceIndexToHeight(i);
+        addPointsFromSurface(solid, tomograph.grid,  z, surface,    0, yOff, points, map);
     }
 
     for(size_t i=0; i < regions.flatSurfaces.size(); i++)
@@ -427,35 +431,7 @@ void gcodeModel::loadSliceData(const Tomograph& tomograph,
         }
     }
 
-//    if(viewLoops)
-//    {
-//        for (unsigned int i = 0; i < slices.size(); i++)
-//        {
-//            const SliceData &sliceData = slices[i];
-//            for(unsigned int extruderId = 0; extruderId < sliceData.extruderSlices.size(); extruderId++)
-//            {
-//                const ExtruderSlice &slice = sliceData.extruderSlices[extruderId];
-//                float z = (float) sliceData.getZHeight();
 
-//                //cout << "sazz "  <<endl;
-//                const Polygons &boundaries = slice.boundary;
-//                const Polygons &infills = slice.infills;
-//                //cout << "slice " << slice.insetLoopsList.size() << endl;
-//                //cout << "BOUNDARY COUNT " << boundary.size() << endl;
-
-//                 // right side
-//                addPointsFromPolygons(boundaries, xOff, 0, z,  perimeter, invisible, 0, feedrate, flowrate, points, map);
-
-//                for(unsigned int j=0; j< slice.insetLoopsList.size(); j++)
-//                {
-//                    const Polygons& insetLoops = slice.insetLoopsList[j];
-//                    // right side
-//                    addPointsFromPolygons(insetLoops, xOff, 0, z, shell, invisible, j, feedrate, flowrate,  points, map);
-//                }
-//            }
-
-//        }
-//    }
 
 }
 
