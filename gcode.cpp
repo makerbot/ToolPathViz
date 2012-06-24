@@ -286,7 +286,7 @@ void gcodeModel::loadGcodeLine(const char* lineStr)
 
 
 
-void addPointsFromPolygon(const Polygon &poly,
+void addPointsFromPolygon(const mgl::Polygon &poly,
                           float xOff,
                           float yOff,
                           float z,
@@ -307,7 +307,7 @@ void addPointsFromPolygons(const Polygons& polys, float xOff, float yOff, float 
     map.recordHeight(z);
     for(unsigned int i=0; i < polys.size(); i++)
     {
-       const Polygon &poly = polys[i];
+      const mgl::Polygon &poly = polys[i];
        if(!poly.size()) continue;
        // move to
        const Vector2 p = poly[0];
