@@ -4,8 +4,8 @@
 #include <QtGui/QApplication>
 #include <QGLWidget>
 
-#include <gcode.h>
-#include <arcball.h>
+#include "gcode.h"
+#include "arcball.h"
 
 #include "mgl/regioner.h"
 
