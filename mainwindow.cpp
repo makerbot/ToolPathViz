@@ -361,8 +361,11 @@ void MainWindow::loadFile(const QString &fileName)
     }
 
     std::string x(fileName.toAscii());
+    
+    size_t dot_index = x.find_last_of('.');
+    size_t x_size = x.size();
 
-    std::string ex = x.substr(x.find_last_of('.'), ex.size()-1);
+    std::string ex = x.substr(dot_index, x_size-1);
 
     if( (ex == ".stl") ||  (ex == ".STL") )
     {
@@ -439,6 +442,5 @@ void MainWindow::on_actionOpen_3D_model_triggered()
 
 void MainWindow::on_pushButtonSlice_clicked()
 {
-    // ui->graphicsView->model.modelFile
     sliceModelAndCreateToolPaths(ui->graphicsView->model.modelFile.c_str());
 }
