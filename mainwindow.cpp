@@ -306,12 +306,15 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
         Regions regions; 		//  = ui->graphicsView->model.regions;
         std::vector<mgl::SliceData> slices;
 
-	Meshy mesh(slicerCfg.firstLayerZ, slicerCfg.layerH);
-	mesh.readStlFile(modelFile.c_str());
-	mesh.alignToPlate();
+		Meshy mesh;
+		mesh.readStlFile(modelFile.c_str());
+		mesh.alignToPlate();
+
+		Segmenter segmenter(slicerCfg.firstLayerZ, slicerCfg.layerH);
+		segmenter.tablaturize(mesh);
 
         Slicer slicer(slicerCfg, &progress);
-        slicer.tomographyze(mesh, tomograph);
+        slicer.tomographyze(segmenter, tomograph);
         cout << "Slicer done" << endl;
 
         Regioner regioner(slicerCfg, &progress);
