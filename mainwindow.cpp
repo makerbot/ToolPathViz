@@ -303,8 +303,10 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
         Progress progress(ui->label_task, ui->progressBar);
 
         Tomograph tomograph; 	// = ui->graphicsView->model.tomograph;
+		LayerLoops layerloops;
         Regions regions; 		//  = ui->graphicsView->model.regions;
         std::vector<mgl::SliceData> slices;
+		LayerPaths layerpaths;
 
 		Meshy mesh;
 		mesh.readStlFile(modelFile.c_str());
@@ -314,18 +316,18 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
 		segmenter.tablaturize(mesh);
 
         Slicer slicer(slicerCfg, &progress);
-        slicer.tomographyze(segmenter, tomograph);
+		slicer.generateLoops(segmenter, layerloops);
         cout << "Slicer done" << endl;
 
         Regioner regioner(slicerCfg, &progress);
-        regioner.generateSkeleton(tomograph, regions);
+        regioner.generateSkeleton(layerloops, regions);
         cout << "Regioner done" << endl;
 
         Pather pather(&progress);
-        pather.generatePaths(tomograph, regions, slices);
+        pather.generatePaths(layerloops, regions, layerpaths);
         cout << "Pather done" << endl;
 
-        ui->graphicsView->loadSliceData(tomograph, regions, slices);
+        ui->graphicsView->loadSliceData(layerloops, regions, layerpaths);
         ui->LayerHeight->setMaximum(ui->graphicsView->model.getMapSize());
         ui->LayerMin->setMaximum(ui->graphicsView->model.getMapSize());
         ui->LayerMin->setValue(0);
@@ -334,6 +336,7 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
         // things we need to remember
         ui->graphicsView->model.layerMeasure = tomograph.layerMeasure;
         ui->graphicsView->model.slices = slices;
+		ui->graphicsView->model.slicePaths = layerpaths;
         ui->graphicsView->model.gcoderCfg = gcoderCfg;
         ui->graphicsView->model.modelFile = modelFile;
     }
