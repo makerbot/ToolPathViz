@@ -553,7 +553,7 @@ void gcodeModel::loadSliceData(const mgl::LayerLoops& layerloops,
 			 addPointsFromPaths(outlines, 0, 0, z, 
 					perimeter, travel, 0, feedrate, flowrate, points, map);
 			 addPointsFromPaths(infills, 0, 0, z, 
-					perimeter, travel, 0, feedrate, flowrate, points, map);
+					infill, travel, 0, feedrate, flowrate, points, map);
 			size_t insetIndex = 0;
 			for(LayerPaths::Layer::ExtruderLayer::const_inset_iterator insetIter = 
 					insets.begin(); 
