@@ -157,6 +157,7 @@ public:
     std::string modelFile;
     mgl::GCoderConfig gcoderCfg;
     std::vector<mgl::SliceData> slices;
+	mgl::LayerPaths slicePaths;
     mgl::LayerMeasure layerMeasure;
 
 
@@ -179,9 +180,19 @@ public:
     gcodeModel();
     ~gcodeModel();
 
-    void loadSliceData(const mgl::Tomograph &tomograph, const mgl::Regions &regions, const std::vector<mgl::SliceData> &sliceData);
+    void loadSliceData(const mgl::Tomograph &tomograph, 
+			const mgl::Regions &regions, 
+			const std::vector<mgl::SliceData> &sliceData);
+	
+	void loadSliceData(const mgl::LayerLoops& layerloops, 
+			const mgl::Regions &regions, 
+			const mgl::LayerPaths& layerpaths);
 
-    void loadRegions(const mgl::Tomograph &tomograph, const mgl::Regions &regions);
+    void loadRegions(const mgl::Tomograph &tomograph, 
+			const mgl::Regions &regions);
+	
+	void loadRegions(const mgl::LayerLoops& layerloops, 
+			const mgl::Regions& regions);
 
     void loadGCode(QString filename);
 
