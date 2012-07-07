@@ -11,11 +11,13 @@ HEADERS += \
     src/load/parsers.h \
     src/load/visualizers.h \
     src/view/toolpathscene.h \
-    src/example.h
+    src/example.h \
+    src/view/viewmodel.h
 
 SOURCES += src/main.cpp \
     src/model/toolpath.cpp \
     src/model/visual.cpp \
     src/load/parsers.cpp \
     src/load/visualizers.cpp \
-    src/view/toolpathscene.cpp
+    src/view/toolpathscene.cpp \
+    src/view/viewmodel.cpp

@@ -5,6 +5,7 @@
 
 #include "src/model/visual.h"
 #include "src/model/toolpath.h"
+#include "viewmodel.h"
 
 /*!
   ToolpathScene is a QGraphicsScene for displaying Toolpaths.
@@ -37,6 +38,9 @@ private:
 
     /** Have the visualizer re-analyze the toolpath */
     void visualize();
+
+    /** for setting up opengl stuff */
+    ViewModel m_viewModel;
 
 public:
     explicit ToolpathScene(QObject *parent = 0);

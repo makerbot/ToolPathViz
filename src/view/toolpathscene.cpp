@@ -39,10 +39,12 @@ void ToolpathScene::drawBackground(QPainter *painter, const QRectF &rect)
     int engineType = painter->paintEngine()->type();
     if (engineType != QPaintEngine::OpenGL
             && engineType != QPaintEngine::OpenGL2) {
-        qWarning("OpenGLScene: drawBackground needs a QGLWidget to be set as viewport on the graphics view");
+        qWarning("OpenGLScene: drawBackground needs a QGLWidget \
+                 to be set as viewport on the graphics view");
         return;
     }
 
+    m_viewModel.setupView();
     m_visual.renderGL();
 }
 
