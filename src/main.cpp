@@ -2,7 +2,7 @@
 
 int main(int argc, char *argv[])
 {
-    GCodeViewApplication a(argc, argv);
+    QApplication a(argc, argv);
 
     return a.exec();
 }

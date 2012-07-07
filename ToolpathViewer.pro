@@ -22,4 +22,5 @@ SOURCES += src/main.cpp \
     src/view/toolpathview.cpp \
     src/model/toolpath.cpp \
     src/model/visual.cpp \
-    src/load/parsers.cpp
+    src/load/parsers.cpp \
+    src/load/visualizers.cpp

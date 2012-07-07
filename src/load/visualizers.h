@@ -19,7 +19,22 @@ public:
     Visual visualize(const Toolpath&);
 
 protected:
-    virtual void moveAbsoluteStep(const MoveAbsoluteStep&) {}
+    virtual void moveAbsoluteStep(MoveAbsoluteStep const *const,
+                                  Visual&)
+    {}
+};
+
+class ExampleVisualizer : public Visualizer
+{
+private:
+    /** the previous point */
+    QVector3D prev;
+    /** is this the first point? false after the first point is read. */
+    bool firstPoint;
+
+    ExampleVisualizer();
+protected:
+    void moveAbsoluteStep(MoveAbsoluteStep const *const, Visual&);
 };
 
 #endif // VISUALIZERS_H

@@ -1,13 +1,15 @@
 #ifndef TOOLPATH_H
 #define TOOLPATH_H
 
-class Toolpath
+#include <QList>
+
+#include "step.h"
+
+class Toolpath : public QList<Step const *const>
 {
 private:
 
-
 public:
-    Toolpath();
 };
 
 #endif // TOOLPATH_H
