@@ -2,31 +2,10 @@
 #include <QMainWindow>
 
 #include "load/parsers.h"
+#include "load/visualizers.h"
 #include "view/toolpathscene.h"
 
-class GraphicsView : public QGraphicsView
-{
-public:
-    GraphicsView(QGraphicsScene *scene, QWidget *parent = 0) :
-        QGraphicsView(scene, parent)
-    {
-        QGLFormat glFormat(QGL::SampleBuffers | QGL::AlphaChannel);
-        glFormat.setSwapInterval(1); // vsync
-
-        QGLWidget *glWidget = new QGLWidget(glFormat, this);
-
-        setViewport(glWidget);
-        setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-    }
-
-protected:
-    void resizeEvent(QResizeEvent *event)
-    {
-        QGraphicsView::resizeEvent(event);
-        if(scene())
-            scene()->setSceneRect(QRect(QPoint(0, 0), event->size()));
-    }
-};
+#include "example.h"
 
 int main(int argc, char *argv[])
 {
@@ -60,7 +39,13 @@ int main(int argc, char *argv[])
     }
 
     // let the user choose a visualizer
-    //???
+    VisualizerDialog visualizerDialog(&mw);
+    QObject::connect(&visualizerDialog, SIGNAL(visualizerSelected(QString)),
+                     &ts, SLOT(setVisualizer(QString)));
+
+    visualizerDialog.show();
+    visualizerDialog.raise();
+    visualizerDialog.activateWindow();
 
     return a.exec();
 }
