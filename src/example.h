@@ -6,9 +6,13 @@
 
 class GraphicsView : public QGraphicsView
 {
+private:
+    ToolpathScene *m_scene;
+
 public:
-    GraphicsView(QGraphicsScene *scene, QWidget *parent = 0) :
-        QGraphicsView(scene, parent)
+    GraphicsView(ToolpathScene *scene, QWidget *parent = 0) :
+        QGraphicsView(scene, parent),
+        m_scene(scene)
     {
         QGLFormat glFormat(QGL::SampleBuffers | QGL::AlphaChannel);
         glFormat.setSwapInterval(1); // vsync
@@ -23,8 +27,11 @@ protected:
     void resizeEvent(QResizeEvent *event)
     {
         QGraphicsView::resizeEvent(event);
-        if(scene())
+
+        if(scene()) {
             scene()->setSceneRect(QRect(QPoint(0, 0), event->size()));
+            m_scene->resize(event->size().width(), event->size().height());
+        }
     }
 };
 
@@ -84,6 +91,8 @@ public:
         // let the user choose a visualizer
         connect(&m_vl, SIGNAL(visualizerSelected(QString)),
                 &m_ts, SLOT(setVisualizer(QString)));
+        connect(&m_vl, SIGNAL(visualizerSelected(QString)),
+                &m_ts, SLOT(update()));
 
         connect(openFileButton, SIGNAL(clicked()),
                 this, SLOT(open()));
@@ -92,7 +101,7 @@ public:
 public slots:
     void open() {
 
-        // create the file filter for the QFileDialog from the names of the parsers
+        // create the file filter from the names of the parsers
         QString filter;
         foreach(QString f, m_ts.parsers())
         {
@@ -100,7 +109,11 @@ public slots:
             filter.append(";;");
         }
 
-        QFileDialog fileDialog(this, QString("Open Toolpath"), QString(""), filter);
+        QFileDialog fileDialog(this,
+                               QString("Open Toolpath"),
+                               QString(""),
+                               filter);
+
         fileDialog.setFileMode(QFileDialog::ExistingFile);
         fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
 

@@ -52,6 +52,11 @@ void ToolpathScene::drawBackground(QPainter *painter, const QRectF &rect)
     m_visual.renderGL();
 }
 
+void ToolpathScene::resize(int w, int h)
+{
+    m_viewModel.resize(w, h);
+}
+
 void ToolpathScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if(not event->isAccepted())

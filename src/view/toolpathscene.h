@@ -58,6 +58,9 @@ public:
     /** reimplemented to render the visual as the background of the widget */
     void drawBackground(QPainter *painter, const QRectF &rect);
 
+    // resizes the view
+    void resize(int w, int h);
+
 protected:
     void mousePressEvent( QGraphicsSceneMouseEvent* event );
     void mouseMoveEvent( QGraphicsSceneMouseEvent* event );
