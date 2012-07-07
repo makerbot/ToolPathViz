@@ -60,4 +60,18 @@ struct ExampleGCodeParser : public Parser
     }
 };
 
+struct FullExampleGCodeParser : public Parser
+{
+    bool loadToolpath(const QFileInfo &file, Toolpath &path) const;
+
+    const QString extension() const {
+        return "*.gcode";
+    }
+    const QString filter() const {
+        return "Full Example GCode Parser ("+extension()+")";
+    }
+};
+
+
+
 #endif // PARSERS_H

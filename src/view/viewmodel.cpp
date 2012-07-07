@@ -192,7 +192,7 @@ void ViewModel::setupView()
     glLoadIdentity();
     legacyLookAt(lookAtEye, lookAtCenter, lookAtUp);
 
-    glLightfv(GL_LIGHT1, GL_POSITION,LightPosition);
+    glLightfv(GL_LIGHT1, GL_POSITION, LightPosition);
 
     glMultMatrixd(rotationMatrix().constData());
 }

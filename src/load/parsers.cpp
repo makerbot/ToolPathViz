@@ -7,6 +7,7 @@ ParserFactory::ParserFactory()
 {
     // v Add parsers to this list v
     m_parsers.append(new ExampleGCodeParser());
+    m_parsers.append(new FullExampleGCodeParser());
     // ^ Add parsers to this list ^
 }
 
