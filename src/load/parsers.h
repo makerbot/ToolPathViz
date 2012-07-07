@@ -40,12 +40,12 @@ struct ParserFactory
 
     /** Returns a QString filter displaying all the supported
         Toolpath file formats. Intended for use with QFileDialog. */
-    QString openDialogFilter();
+    QStringList parsers();
 
     ParserFactory();
 
 private:
-    QList<const Parser*> parsers;
+    QList<const Parser*> m_parsers;
 };
 
 struct ExampleGCodeParser : public Parser

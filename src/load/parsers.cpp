@@ -6,7 +6,7 @@
 ParserFactory::ParserFactory()
 {
     // v Add parsers to this list v
-    parsers.append(new ExampleGCodeParser());
+    m_parsers.append(new ExampleGCodeParser());
     // ^ Add parsers to this list ^
 }
 
@@ -14,7 +14,7 @@ bool ParserFactory::loadToolpath(const QFileInfo &file,
                                  const QString parserFilter,
                                  Toolpath &path)
 {
-    foreach(const Parser *p, parsers)
+    foreach(const Parser *p, m_parsers)
     {
         if(parserFilter.compare(p->filter()) == 0)
         {
@@ -25,13 +25,12 @@ bool ParserFactory::loadToolpath(const QFileInfo &file,
     return false;
 }
 
-QString ParserFactory::openDialogFilter()
+QStringList ParserFactory::parsers()
 {
-    QString filters("");
-    foreach(const Parser *p, parsers)
+    QStringList filters;
+    foreach(const Parser *p, m_parsers)
     {
-        filters.append(p->filter());
-        filters.append(";;");
+        filters << p->filter();
     }
     return filters;
 }

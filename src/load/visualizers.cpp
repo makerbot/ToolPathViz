@@ -1,5 +1,26 @@
 #include "visualizers.h"
 
+QMap<QString, Visualizer*> visualizerMap()
+{
+    QMap<QString, Visualizer*> visualizers;
+
+    // v Add visualizers to this map v
+    visualizers.insert("Example Visualizer", new ExampleVisualizer());
+    // ^ Add visualizers to this map ^
+
+    return visualizers;
+}
+
+QStringList visualizerList()
+{
+    QStringList visualizers;
+
+    foreach(QString s, visualizerMap().keys())
+        visualizers << s;
+
+    return visualizers;
+}
+
 Visual Visualizer::visualize(const Toolpath &path)
 {
     Visual result;

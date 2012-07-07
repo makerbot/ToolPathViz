@@ -10,12 +10,13 @@
 
     To produce a visual from a parsed toolpath one need only subclass
     Visualizer and reimplement the methods for reading those Steps that
-    are needed for producing the visual desired.
+    are needed for producing the visual desired, then add your visualizer to the
+    Map in visualizers.cpp.
   */
 class Visualizer
 {
 public:
-    /** called to create a dispalyable Visual */
+    /** called to create a displayable Visual */
     Visual visualize(const Toolpath&);
 
 protected:
@@ -31,9 +32,14 @@ private:
     /** is this the first point? false after the first point is read. */
     bool firstPoint;
 
+public:
     ExampleVisualizer();
+
 protected:
     void moveAbsoluteStep(const MoveAbsoluteStep*, Visual&);
 };
+
+QStringList visualizerList();
+QMap<QString, Visualizer*> visualizerMap();
 
 #endif // VISUALIZERS_H
