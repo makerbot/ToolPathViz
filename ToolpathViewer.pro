@@ -13,6 +13,7 @@ HEADERS += \
     src/load/gcode/gcode.h \
     src/view/toolpathscene.h \
     src/view/viewmodel.h \
+    src/view/viewpointcontroller.h \
     src/example.h
 
 SOURCES += src/main.cpp \
@@ -23,4 +24,5 @@ SOURCES += src/main.cpp \
     src/load/gcode/gcode.cpp \
     src/view/toolpathscene.cpp \
     src/view/viewmodel.cpp \
+    src/view/viewpointcontroller.cpp \
     src/load/gcode/example.cpp

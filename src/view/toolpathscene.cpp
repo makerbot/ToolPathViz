@@ -3,9 +3,13 @@
 #include "src/load/parsers.h"
 #include "src/load/visualizers.h"
 
-ToolpathScene::ToolpathScene( QObject *parent) :
+ToolpathScene::ToolpathScene(QObject *parent) :
     QGraphicsScene(parent)
 {
+    m_vpController = new AzimuthZenithController(m_viewModel, this);
+
+    connect(&m_viewModel, SIGNAL(updated()),
+            this, SLOT(update()));
 }
 
 void ToolpathScene::parse()
@@ -46,6 +50,30 @@ void ToolpathScene::drawBackground(QPainter *painter, const QRectF &rect)
 
     m_viewModel.setupView();
     m_visual.renderGL();
+}
+
+void ToolpathScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    if(not event->isAccepted())
+        m_vpController->mousePressEvent(event);
+}
+
+void ToolpathScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if(not event->isAccepted())
+        m_vpController->mouseMoveEvent(event);
+}
+
+void ToolpathScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    if(not event->isAccepted())
+        m_vpController->mouseReleaseEvent(event);
+}
+
+void ToolpathScene::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+    if(not event->isAccepted())
+        m_vpController->wheelEvent(event);
 }
 
 void ToolpathScene::setFile(QFileInfo file)
