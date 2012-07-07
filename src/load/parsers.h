@@ -53,7 +53,7 @@ struct ExampleGCodeParser : public Parser
     bool loadToolpath(const QFileInfo &file, Toolpath &path) const;
 
     const QString extension() const {
-        return "gcode";
+        return "*.gcode";
     }
     const QString filter() const {
         return "Example GCode Parser ("+extension()+")";

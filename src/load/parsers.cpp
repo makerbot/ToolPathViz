@@ -34,19 +34,3 @@ QStringList ParserFactory::parsers()
     }
     return filters;
 }
-
-bool ExampleGCodeParser::loadToolpath(const QFileInfo &info,
-                                      Toolpath &path) const
-{
-    QFile file(info.canonicalFilePath());
-    file.open(QIODevice::ReadOnly);
-    QTextStream in(&file);
-
-//    while(not in.atEnd())
-//    {
-//        QTextStream line(in.readLine());
-//        QString code
-//    }
-
-    return false;
-}

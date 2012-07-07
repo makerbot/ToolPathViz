@@ -22,4 +22,5 @@ SOURCES += src/main.cpp \
     src/load/visualizers.cpp \
     src/load/gcode/gcode.cpp \
     src/view/toolpathscene.cpp \
-    src/view/viewmodel.cpp
+    src/view/viewmodel.cpp \
+    src/load/gcode/example.cpp
