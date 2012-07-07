@@ -161,7 +161,7 @@ void ViewModel::setupModelview()
 
 void ViewModel::setupView()
 {
-    glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glShadeModel( GL_SMOOTH );
 
     glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);

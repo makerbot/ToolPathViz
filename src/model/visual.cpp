@@ -3,7 +3,7 @@
 void Line::renderGL() const
 {
     glLineWidth(1);
-    glColor3i(color.red(), color.green(), color.blue());
+    glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF());
     glBegin(GL_LINES);
     glVertex3d(from.x(), from.y(), from.z());
     glVertex3d(to.x(), to.y(), to.z());
