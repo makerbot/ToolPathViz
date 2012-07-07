@@ -1,6 +1,6 @@
 #include "visual.h"
 
-void Line::renderGL()
+void Line::renderGL() const
 {
     glColor3i(color.red(), color.green(), color.blue());
     glBegin(GL_LINES);
@@ -9,14 +9,14 @@ void Line::renderGL()
     glEnd();
 }
 
-void Visual::add(const VisualItem *const item)
+void Visual::add(const VisualItem *item)
 {
     items.append(item);
 }
 
 void Visual::renderGL()
 {
-    foreach(VisualItem* item, items)
+    foreach(const VisualItem *item, items)
     {
         item->renderGL();
     }

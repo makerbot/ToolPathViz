@@ -18,7 +18,7 @@ class ToolpathView : public QGraphicsView
     Q_OBJECT
 public:
     explicit ToolpathView(QWidget *parent = 0);
-    qreal x;
+
 signals:
     
 public slots:

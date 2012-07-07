@@ -5,7 +5,7 @@
 
 #include "step.h"
 
-class Toolpath : public QList<Step const *const>
+class Toolpath : public QList<const Step*>
 {
 private:
 

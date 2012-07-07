@@ -25,7 +25,8 @@ struct VisualItem
         color(c)
     {}
 
-    virtual void renderGL() =0;
+    /** Renders this item. Should leave the view matrices untouched. */
+    virtual void renderGL() const =0;
 };
 
 /*!
@@ -41,7 +42,7 @@ struct Line : public VisualItem
         to(t)
     {}
 
-    void renderGL();
+    void renderGL() const;
 };
 
 /*!
@@ -54,10 +55,10 @@ struct Line : public VisualItem
 class Visual
 {
 private:
-    QList<VisualItem const *const> items;
+    QList<const VisualItem*> items;
 
 public:
-    void add(VisualItem const *const);
+    void add(const VisualItem*);
 
     /** uses the current openGL context to draw itself */
     void renderGL();

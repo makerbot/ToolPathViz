@@ -8,8 +8,9 @@
 /*!
     The base class for all actions a toolpath file might contain.
   */
-struct Step
+class Step
 {
+public:
     /** The source of this Step in the original file.
         Usually used to describe the line number it came from,
         could also refer to a byte or a packet. */
@@ -17,13 +18,15 @@ struct Step
 
     Step(uint o) : origin(o) {}
 
+    virtual void enablePolymorphism() {}
 };
 
 /*!
   MoveAbsoluteStep refers to a movement to a position in absolute coordinates
   */
-struct MoveAbsoluteStep : public Step
+class MoveAbsoluteStep : public Step
 {
+public:
     qreal x, y, z, a, b;
 
     MoveAbsoluteStep(uint o, qreal x, qreal y, qreal z, qreal a, qreal b) :

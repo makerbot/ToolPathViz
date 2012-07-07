@@ -19,8 +19,7 @@ public:
     Visual visualize(const Toolpath&);
 
 protected:
-    virtual void moveAbsoluteStep(MoveAbsoluteStep const *const,
-                                  Visual&)
+    virtual void moveAbsoluteStep(const MoveAbsoluteStep*, Visual&)
     {}
 };
 
@@ -34,7 +33,7 @@ private:
 
     ExampleVisualizer();
 protected:
-    void moveAbsoluteStep(MoveAbsoluteStep const *const, Visual&);
+    void moveAbsoluteStep(const MoveAbsoluteStep*, Visual&);
 };
 
 #endif // VISUALIZERS_H
