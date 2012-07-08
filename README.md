@@ -46,6 +46,7 @@ This is in approximate order of how important I think these things are/what orde
 [1] The current method requires adding a check with a dynamic_cast to visualizers.cpp and a function on `Visualizer` to pass the converted `Step` to. 
 * I've looked at using variants of some sort, but you lose the meaning of the data, and data types are limited by implementation.
 * I've looked at using some template trick to automatically build a list of things that subclass `Step`, maybe like:
+
 ```c++
 template<type derived>
 class Step
