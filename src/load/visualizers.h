@@ -6,12 +6,14 @@
 #include "src/model/visual.h"
 
 /*!
-    The base class for all visualizers.
+  The base class for all visualizers.
 
-    To produce a visual from a parsed toolpath one need only subclass
-    Visualizer and reimplement the methods for reading those Steps that
-    are needed for producing the visual desired, then add your visualizer to the
-    Map in visualizers.cpp.
+  To produce a visual from a parsed toolpath subclass
+  Visualizer and reimplement the methods for reading those Steps that
+  are needed for producing the visual desired.
+
+  To display your visualizer in the example (src/main.cpp),
+  add your parser to the map in src/example.h
   */
 class Visualizer
 {
@@ -26,6 +28,9 @@ protected:
     virtual void newLayerStep(const NewLayerStep*, Visual&) {}
 };
 
+/*!
+  A simple example of a visualizer. Draws white lines for all moves.
+  */
 class ExampleVisualizer : public Visualizer
 {
 private:
@@ -41,6 +46,10 @@ protected:
     void moveAbsoluteStep(const MoveAbsoluteStep*, Visual&);
 };
 
+/*!
+  A slightly more complex example of a visualizer. Draws different colors for
+  different heads.
+  */
 class DualstrusionVisualizer : public Visualizer
 {
 private:

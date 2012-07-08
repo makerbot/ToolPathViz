@@ -8,8 +8,8 @@
 /*!
     The base class for all actions a toolpath file might contain.
 
-    To add a new kind of step, subclass Step and add a case to the loop in
-    visualizers.cpp
+    To add a new kind of step, subclass Step, add a function to Visualizer, and
+    add a case to the loop in visualizers.cpp
   */
 struct Step
 {

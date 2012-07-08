@@ -12,6 +12,7 @@
 
   To create a new Parser, simply subclass and reimplement
   loadToolpathInternal(), extension(), and name().
+
   To display your parser in the example (src/main.cpp),
   add your parser to the map in src/example.h
   */
