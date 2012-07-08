@@ -4,38 +4,34 @@
 #include "src/load/visualizers.h"
 
 ToolpathScene::ToolpathScene(QObject *parent) :
-    QGraphicsScene(parent)
+    QGraphicsScene(parent),
+    m_file(),
+    m_parser(0),
+    m_toolpath(),
+    m_visualizer(0),
+    m_visual(),
+    m_viewModel(),
+    m_vpController(new AzimuthZenithController(m_viewModel, this))
 {
-    m_vpController = new AzimuthZenithController(m_viewModel, this);
-
-    connect(&m_viewModel, SIGNAL(updated()),
-            this, SLOT(update()));
+    connect(&m_viewModel, SIGNAL(updated()), this, SLOT(update()));
+    connect(this, SIGNAL(sceneRectChanged(QRectF)),
+            &m_viewModel, SLOT(resize(QRectF)));
 }
 
 void ToolpathScene::parse()
 {
     m_toolpath.clear();
 
-    ParserFactory pFact;
-
-    pFact.loadToolpath(m_file, m_parser, m_toolpath);
+    if(m_parser)
+        m_parser->loadToolpath(m_file, m_toolpath);
 }
 
 void ToolpathScene::visualize()
 {
-    Visualizer* visualizer = visualizerMap().value(m_visualizer, 0);
-    if(visualizer != 0)
-        m_visual = visualizer->visualize(m_toolpath);
-}
+    if(m_visualizer)
+        m_visual = m_visualizer->visualize(m_toolpath);
 
-QStringList ToolpathScene::parsers()
-{
-    return ParserFactory().parsers();
-}
-
-QStringList ToolpathScene::visualizers()
-{
-    return visualizerList();
+    update();
 }
 
 void ToolpathScene::drawBackground(QPainter *painter, const QRectF &rect)
@@ -50,11 +46,6 @@ void ToolpathScene::drawBackground(QPainter *painter, const QRectF &rect)
 
     m_viewModel.setupView();
     m_visual.renderGL();
-}
-
-void ToolpathScene::resize(int w, int h)
-{
-    m_viewModel.resize(w, h);
 }
 
 void ToolpathScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -90,7 +81,7 @@ void ToolpathScene::setFile(QFileInfo file)
     visualize();
 }
 
-void ToolpathScene::setParser(QString parser)
+void ToolpathScene::setParser(Parser *parser)
 {
     if(m_parser == parser)
         return;
@@ -102,7 +93,7 @@ void ToolpathScene::setParser(QString parser)
     visualize();
 }
 
-void ToolpathScene::setVisualizer(QString visualizer)
+void ToolpathScene::setVisualizer(Visualizer *visualizer)
 {
     if(m_visualizer == visualizer)
         return;

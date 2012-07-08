@@ -47,8 +47,6 @@ public:
     }
     qreal zoom() const { return m_zoom; }
 
-    void resize( int width, int height );
-
     /** Sets up the attributes/matrices used when
         rendering the scene to screen */
     void setupView();
@@ -77,6 +75,8 @@ public slots:
     void setRotation(const QQuaternion& r);
     /** Set the zoom of the view. */
     void setZoom(const qreal z);
+
+    void resize(const QRectF&);
 
 signals:
     /** Signals that a change requiring redisplay has occured */

@@ -3,6 +3,8 @@
 
 #include <QGraphicsScene>
 
+#include "src/load/parsers.h"
+#include "src/load/visualizers.h"
 #include "src/model/visual.h"
 #include "src/model/toolpath.h"
 #include "viewmodel.h"
@@ -13,6 +15,8 @@
 
   Set a file, a parser, and a visualizer to display the toolpath.
   Valid parser and visualizer names are listed by parsers() and visualizers().
+
+  Note: ToolpathScene requires an opengl painter on QGraphicsViews that view it.
   */
 class ToolpathScene : public QGraphicsScene
 {
@@ -23,13 +27,13 @@ private:
     QFileInfo m_file;
 
     /** The parser with which to load the file */
-    QString m_parser;
+    Parser *m_parser;
 
     /** The model of the toolpath produced by the parser */
     Toolpath m_toolpath;
 
     /** The visualizer with which to create a visual from a toolpath */
-    QString m_visualizer;
+    Visualizer *m_visualizer;
 
     /** The visual produced, to be displayed by the ToolpathScene */
     Visual m_visual;
@@ -49,17 +53,8 @@ private:
 public:
     explicit ToolpathScene(QObject *parent = 0);
     
-
-    /** The list of valid parser names */
-    QStringList parsers();
-    /** The list of valid visualizer names */
-    QStringList visualizers();
-
     /** reimplemented to render the visual as the background of the widget */
     void drawBackground(QPainter *painter, const QRectF &rect);
-
-    // resizes the view
-    void resize(int w, int h);
 
 protected:
     void mousePressEvent( QGraphicsSceneMouseEvent* event );
@@ -71,9 +66,9 @@ public slots:
     /** opens a file for visualization */
     void setFile(QFileInfo);
     /** Sets the parser to use when reading files */
-    void setParser(QString);
+    void setParser(Parser*);
     /** Sets the visualizer to use for creating visuals from files */
-    void setVisualizer(QString);
+    void setVisualizer(Visualizer*);
 };
 
 #endif // TOOLPATHSCENE_H

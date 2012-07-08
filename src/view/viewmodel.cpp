@@ -104,9 +104,9 @@ void ViewModel::setZoom(const qreal z)
 }
 
 ///  resize the scene
-void ViewModel::resize( int w, int h )
+void ViewModel::resize(const QRectF& rect)
 {
-    m_aspect = ((GLfloat)w) / h;
+    m_aspect = rect.width() / rect.height();
     updateFrustrum();
 }
 

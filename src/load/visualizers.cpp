@@ -1,27 +1,5 @@
 #include "visualizers.h"
 
-QMap<QString, Visualizer*> visualizerMap()
-{
-    QMap<QString, Visualizer*> visualizers;
-
-    // v Add visualizers to this map v
-    visualizers.insert("Example Visualizer", new ExampleVisualizer());
-    visualizers.insert("Dualstrusion Visualizer", new DualstrusionVisualizer());
-    // ^ Add visualizers to this map ^
-
-    return visualizers;
-}
-
-QStringList visualizerList()
-{
-    QStringList visualizers;
-
-    foreach(QString s, visualizerMap().keys())
-        visualizers << s;
-
-    return visualizers;
-}
-
 Visual Visualizer::visualize(const Toolpath &path)
 {
     Visual result;
@@ -65,3 +43,49 @@ Visual Visualizer::visualize(const Toolpath &path)
     return result;
 }
 
+ExampleVisualizer::ExampleVisualizer() :
+    firstPoint(true)
+{}
+
+void ExampleVisualizer::moveAbsoluteStep(const MoveAbsoluteStep *step,
+                                         Visual& visual)
+{
+    QVector3D newPoint(step->x, step->y, step->z);
+    if(not firstPoint)
+        visual.add(new Line(*step, QColor(255, 255, 255), prev, newPoint));
+    else
+        firstPoint = false;
+    prev = newPoint;
+}
+
+// for left & right toolheads.
+const QColor leftToolheadColor(192, 0, 0);
+const QColor rightToolheadColor(0, 0, 192);
+
+DualstrusionVisualizer::DualstrusionVisualizer() :
+    firstPoint(true),
+    toolhead(0)
+{}
+
+void DualstrusionVisualizer::moveAbsoluteStep(const MoveAbsoluteStep *step,
+                                             Visual& visual)
+{
+    QVector3D newPoint(step->x, step->y, step->z);
+    QColor lineColor;
+    if(toolhead == 0)
+        lineColor = rightToolheadColor;
+    else if(toolhead == 1)
+        lineColor = leftToolheadColor;
+
+    if(not firstPoint)
+        visual.add(new Line(*step, lineColor, prev, newPoint));
+    else
+        firstPoint = false;
+    prev = newPoint;
+}
+
+void DualstrusionVisualizer::setToolheadStep(const SetToolheadStep *step,
+                                             Visual& visual)
+{
+    toolhead = step->toolhead;
+}

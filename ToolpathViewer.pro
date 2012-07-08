@@ -24,5 +24,4 @@ SOURCES += src/main.cpp \
     src/load/gcode/gcode.cpp \
     src/view/toolpathscene.cpp \
     src/view/viewmodel.cpp \
-    src/view/viewpointcontroller.cpp \
-    src/load/gcode/example.cpp
+    src/view/viewpointcontroller.cpp
