@@ -290,6 +290,8 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
         loadGCoderConfigFromFile(config, gcoderCfg);
         SlicerConfig slicerCfg;
         loadSlicerConfigFromFile(config, slicerCfg);
+		ExtruderConfig extruderCfg;
+		loadExtruderConfigFromFile(config, extruderCfg);
 
         int shells = ui->spinBoxShells->value();
 
@@ -324,7 +326,7 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
         cout << "Regioner done" << endl;
 
         Pather pather(&progress);
-        pather.generatePaths(layerloops, regions, layerpaths);
+        pather.generatePaths(extruderCfg, layerloops, regions, layerpaths);
         cout << "Pather done" << endl;
 
         ui->graphicsView->loadSliceData(layerloops, regions, layerpaths);
