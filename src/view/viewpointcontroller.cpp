@@ -13,7 +13,9 @@ AzimuthZenithController::AzimuthZenithController(ViewModel& view, QObject *paren
     m_targetAzimuth(s_defaultAzimuth), m_targetZenith(s_defaultZenith),
     m_azimuthAnimation(this, "azimuth"),
     m_zenithAnimation(this, "zenith"),
-    m_zoomAnimation(this, "zoom")
+    m_zoomAnimation(this, "zoom"),
+    m_dragStart(),
+    m_isDragging(false)
 {
     m_azimuthAnimation.setDuration(200);
     m_zenithAnimation.setDuration(200);
@@ -26,10 +28,21 @@ AzimuthZenithController::AzimuthZenithController(ViewModel& view, QObject *paren
 
 void AzimuthZenithController::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    m_dragStart = event->scenePos();
 }
 
 void AzimuthZenithController::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    if((not m_isDragging) &&
+       (event->buttons().testFlag(Qt::LeftButton)) &&
+       (m_dragStart - event->scenePos()).manhattanLength() > 3) {
+        qDebug() << (m_dragStart - event->scenePos()).manhattanLength();
+        m_isDragging = true;
+    }
+
+    if(not m_isDragging)
+        return;
+
     m_azimuthAnimation.stop();
     m_zenithAnimation.stop();
 
@@ -49,7 +62,7 @@ void AzimuthZenithController::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void AzimuthZenithController::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 {
-
+    m_isDragging = false;
 }
 
 void AzimuthZenithController::wheelEvent(QGraphicsSceneWheelEvent *event)

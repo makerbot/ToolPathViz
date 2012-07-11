@@ -35,9 +35,6 @@ private:
     /** The visualizer with which to create a visual from a toolpath */
     Visualizer *m_visualizer;
 
-    /** The visual produced, to be displayed by the ToolpathScene */
-    Visual m_visual;
-
     /** Have the parser re-parse the file */
     void parse();
 

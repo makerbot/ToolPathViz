@@ -9,7 +9,6 @@ ToolpathScene::ToolpathScene(QObject *parent) :
     m_parser(0),
     m_toolpath(),
     m_visualizer(0),
-    m_visual(),
     m_viewModel(),
     m_vpController(new AzimuthZenithController(m_viewModel, this))
 {
@@ -29,7 +28,7 @@ void ToolpathScene::parse()
 void ToolpathScene::visualize()
 {
     if(m_visualizer)
-        m_visual = m_visualizer->visualize(m_toolpath);
+        m_visualizer->setToolpath(m_toolpath);
 
     update();
 }
@@ -45,29 +44,35 @@ void ToolpathScene::drawBackground(QPainter *painter, const QRectF &rect)
     }
 
     m_viewModel.setupView();
-    m_visual.renderGL();
+    if(m_visualizer)
+        m_visualizer->renderGL();
 }
 
 void ToolpathScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    QGraphicsScene::mousePressEvent(event);
     if(not event->isAccepted())
         m_vpController->mousePressEvent(event);
 }
 
 void ToolpathScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
+    QGraphicsScene::mouseMoveEvent(event);
     if(not event->isAccepted())
         m_vpController->mouseMoveEvent(event);
+    update();
 }
 
 void ToolpathScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    QGraphicsScene::mouseReleaseEvent(event);
     if(not event->isAccepted())
         m_vpController->mouseReleaseEvent(event);
 }
 
 void ToolpathScene::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
+    QGraphicsScene::wheelEvent(event);
     if(not event->isAccepted())
         m_vpController->wheelEvent(event);
 }

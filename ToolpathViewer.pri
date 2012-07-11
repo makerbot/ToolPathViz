@@ -6,6 +6,7 @@ HEADERS += \
     $$PWD/src/model/step.h \
     $$PWD/src/load/parsers.h \
     $$PWD/src/load/visualizers.h \
+    $$PWD/src/load/controlledvisuals.h \
     $$PWD/src/load/gcode/gcode.h \
     $$PWD/src/view/toolpathscene.h \
     $$PWD/src/view/viewmodel.h \
@@ -16,6 +17,7 @@ SOURCES += \
     $$PWD/src/model/visual.cpp \
     $$PWD/src/load/parsers.cpp \
     $$PWD/src/load/visualizers.cpp \
+    $$PWD/src/load/controlledvisuals.cpp \
     $$PWD/src/load/gcode/gcode.cpp \
     $$PWD/src/view/toolpathscene.cpp \
     $$PWD/src/view/viewmodel.cpp \

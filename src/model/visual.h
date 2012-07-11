@@ -12,56 +12,51 @@
   If you need to display a shape that is not yet supported, just subclass
   this and implement renderGL().
   */
-struct VisualItem
+class VisualItem
 {
-    /** The Step that caused this VisualItem to be created. */
-    const Step& origin;
-
-    /** The color with which this item should be displayed */
-    const QColor color;
-
-    VisualItem(const Step& o, const QColor c) :
-        origin(o),
-        color(c)
-    {}
-
+public:
     /** Renders this item. Should leave the view matrices untouched. */
     virtual void renderGL() const =0;
 };
 
 /*!
-  A simple line.
-  */
-struct Line : public VisualItem
-{
-    const QVector3D from, to;
 
-    Line(const Step& o, const QColor c, const QVector3D f, const QVector3D t) :
-        VisualItem(o, c),
-        from(f),
-        to(t)
-    {}
+  */
+class GroupItem : public VisualItem
+{
+private:
+    QList<VisualItem*> m_items;
+
+public:
+    GroupItem() : VisualItem() {}
+
+    void add(VisualItem*);
 
     void renderGL() const;
 };
 
 /*!
-    A collection of VisualItems (shapes, lines, etc.) that renders
-    itself.
-
-    If you need to display a shape that is not yet supported, just subclass
-    VisualItem and implement its renderGL() function.
+  A simple line.
   */
-class Visual
+class Line : public VisualItem
 {
 private:
-    QList<const VisualItem*> items;
+    const QVector3D m_from, m_to;
+
+    /** The color with which this item should be displayed */
+    const QColor m_color;
 
 public:
-    void add(const VisualItem*);
+    Line(const QColor c, const QVector3D f, const QVector3D t) :
+        VisualItem(),
+        m_from(f),
+        m_to(t),
+        m_color(c)
+    {}
 
-    /** uses the current openGL context to draw itself */
-    void renderGL();
+    void renderGL() const;
 };
+
+
 
 #endif // VISUAL_H

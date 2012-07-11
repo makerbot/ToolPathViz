@@ -11,8 +11,6 @@ char gcode::codes[] =  "ABDEFGHIJKLMPQRSTXYZ";
 gcode::gcode(string command) :
     command(command) {
 
-    //	cout << "parsing command: " << command << std::endl;
-
     // Parse (and strip) any comments out into a comment string
     parseComments();
 
@@ -27,9 +25,7 @@ void gcode::parseComments() {
     if (command.find_first_of(")") != string::npos) {
         comment = command.substr(command.find_first_of("(")+1);
         command = command.substr(0,command.find_first_of("("));
-        //		cout << " comment=" << comment << std::endl;
     }
-
 }
 
 
@@ -44,15 +40,11 @@ void gcode::parseCodes() {
         if (command.find_first_of(codes[codeIndex]) != string::npos) {
             double value = atof(command.substr(command.find_first_of(codes[codeIndex])+1).c_str());
 
-            //			cout << " code=" << codes[codeIndex] << " value=" << value << std::endl;
             parameters.push_back(gCodeParameter(codes[codeIndex],value));
 
-//            std::cout << "parsed: " << codes[codeIndex] << " " << value << '\n';
         }
         codeIndex++;
     }
-
-    std::cout << " " << parameters.size() << " parameters parsed \n ";
 }
 
 
@@ -67,9 +59,9 @@ const string gcode::getComment() const {
 }
 
 bool gcode::hasCode(char searchCode) const {
-    std::cout << " searching for " << searchCode << " " << parameters.size() << " ";
+
     for (unsigned int i = 0; i < parameters.size(); i++) {
-        std::cout << " has " << parameters[i].code;
+
         if(parameters[i].code == searchCode) {
             return true;
         }

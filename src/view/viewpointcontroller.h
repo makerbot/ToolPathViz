@@ -65,6 +65,9 @@ private:
     void adjustZenith(float by);
     void adjustZoom(float by);
 
+    QPointF m_dragStart;
+    bool m_isDragging;
+
 public:
     AzimuthZenithController(ViewModel &view, QObject *parent = 0);
 

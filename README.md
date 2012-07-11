@@ -33,9 +33,8 @@ If you do add a parser or visualizer, let me know with a pull request!
 ## In Progress
 
 This is a list of specific things I'd like to do that I either haven't gotten around to yet, or am unsure of and would appreciate feedback on:
-* An example of a visual with floating controls associated with it. Probably the next thing I'm going to work on.
-* A better way to add new `Step`s [1]
 * Extensive documentation of how to create new parsers/visualizers/steps
+* A better way to add new `Step`s [1]
 * A proper, full, Marlin-or-other-major-reprap-style-gcode compliant gcode parser
 * A proper, full, Makerbot-style-gcode compliant gcode parser (obviously not that different from above)
 * More visualizers, looking at specific aspects of a toolpath [2]

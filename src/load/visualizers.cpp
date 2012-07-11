@@ -1,8 +1,19 @@
 #include "visualizers.h"
 
-Visual Visualizer::visualize(const Toolpath &path)
+#include <QVector3D>
+
+QWidget* Visualizer::overlay()
 {
-    Visual result;
+    return 0;
+}
+
+Visualizer::~Visualizer()
+{
+
+}
+
+void BasicVisualizer::setToolpath(const Toolpath &path)
+{
     // v Add dynamic_cast check to this loop v
     foreach(const Step *s, path)
     {
@@ -10,7 +21,7 @@ Visual Visualizer::visualize(const Toolpath &path)
                 dynamic_cast<const MoveAbsoluteStep *>(s);
         if(mas != 0)
         {
-            moveAbsoluteStep(mas, result);
+            moveAbsoluteStep(mas);
             continue;
         }
 
@@ -18,7 +29,7 @@ Visual Visualizer::visualize(const Toolpath &path)
                 dynamic_cast<const SetFeedrateStep *>(s);
         if(sfs != 0)
         {
-            setFeedrateStep(sfs, result);
+            setFeedrateStep(sfs);
             continue;
         }
 
@@ -26,7 +37,7 @@ Visual Visualizer::visualize(const Toolpath &path)
                 dynamic_cast<const SetToolheadStep *>(s);
         if(sts != 0)
         {
-            setToolheadStep(sts, result);
+            setToolheadStep(sts);
             continue;
         }
 
@@ -34,25 +45,27 @@ Visual Visualizer::visualize(const Toolpath &path)
                 dynamic_cast<const NewLayerStep *>(s);
         if(nls != 0)
         {
-            newLayerStep(nls, result);
+            newLayerStep(nls);
             continue;
         }
     }
     // ^ Add dynamic_cast check to this loop ^
+}
 
-    return result;
+BasicVisualizer::~BasicVisualizer()
+{
+    delete m_visual;
 }
 
 ExampleVisualizer::ExampleVisualizer() :
     firstPoint(true)
 {}
 
-void ExampleVisualizer::moveAbsoluteStep(const MoveAbsoluteStep *step,
-                                         Visual& visual)
+void ExampleVisualizer::moveAbsoluteStep(const MoveAbsoluteStep *step)
 {
     QVector3D newPoint(step->x, step->y, step->z);
     if(not firstPoint)
-        visual.add(new Line(*step, QColor(255, 255, 255), prev, newPoint));
+        m_visual->add(new Line(QColor(255, 255, 255), prev, newPoint));
     else
         firstPoint = false;
     prev = newPoint;
@@ -67,8 +80,7 @@ DualstrusionVisualizer::DualstrusionVisualizer() :
     toolhead(0)
 {}
 
-void DualstrusionVisualizer::moveAbsoluteStep(const MoveAbsoluteStep *step,
-                                             Visual& visual)
+void DualstrusionVisualizer::moveAbsoluteStep(const MoveAbsoluteStep *step)
 {
     QVector3D newPoint(step->x, step->y, step->z);
     QColor lineColor;
@@ -78,14 +90,13 @@ void DualstrusionVisualizer::moveAbsoluteStep(const MoveAbsoluteStep *step,
         lineColor = leftToolheadColor;
 
     if(not firstPoint)
-        visual.add(new Line(*step, lineColor, prev, newPoint));
+        m_visual->add(new Line(lineColor, prev, newPoint));
     else
         firstPoint = false;
     prev = newPoint;
 }
 
-void DualstrusionVisualizer::setToolheadStep(const SetToolheadStep *step,
-                                             Visual& visual)
+void DualstrusionVisualizer::setToolheadStep(const SetToolheadStep *step)
 {
     toolhead = step->toolhead;
 }

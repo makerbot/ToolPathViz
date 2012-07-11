@@ -18,20 +18,49 @@
 class Visualizer
 {
 public:
-    /** called to create a displayable Visual */
-    Visual visualize(const Toolpath&);
+    /** Changes the toolpath this visualizer displays */
+    virtual void setToolpath(const Toolpath&) = 0;
+
+    /** Renders the toolpath using openGL calls */
+    virtual void renderGL() = 0;
+
+    /** Some Visualizers may have controls.
+        The default implementation returns null */
+    virtual QWidget* overlay();
+
+    /** Virtual destructor */
+    virtual ~Visualizer() = 0;
+};
+
+class BasicVisualizer : public Visualizer
+{
+public:
+    BasicVisualizer() :
+        Visualizer(),
+        m_visual(new GroupItem())
+    {}
+
+    void setToolpath(const Toolpath &);
+
+    void renderGL() {
+        m_visual->renderGL();
+    }
+
+    virtual ~BasicVisualizer();
 
 protected:
-    virtual void moveAbsoluteStep(const MoveAbsoluteStep*, Visual&) {}
-    virtual void setFeedrateStep(const SetFeedrateStep*, Visual&) {}
-    virtual void setToolheadStep(const SetToolheadStep*, Visual&) {}
-    virtual void newLayerStep(const NewLayerStep*, Visual&) {}
+    GroupItem* m_visual;
+
+    virtual void moveAbsoluteStep(const MoveAbsoluteStep*) {}
+    virtual void setFeedrateStep(const SetFeedrateStep*) {}
+    virtual void setToolheadStep(const SetToolheadStep*) {}
+    virtual void newLayerStep(const NewLayerStep*) {}
 };
 
 /*!
   A simple example of a visualizer. Draws white lines for all moves.
   */
-class ExampleVisualizer : public Visualizer
+class ExampleVisualizer : public BasicVisualizer
 {
 private:
     /** the previous point */
@@ -43,14 +72,14 @@ public:
     ExampleVisualizer();
 
 protected:
-    void moveAbsoluteStep(const MoveAbsoluteStep*, Visual&);
+    void moveAbsoluteStep(const MoveAbsoluteStep*);
 };
 
 /*!
   A slightly more complex example of a visualizer. Draws different colors for
   different heads.
   */
-class DualstrusionVisualizer : public Visualizer
+class DualstrusionVisualizer : public BasicVisualizer
 {
 private:
     /** the previous point */
@@ -64,11 +93,8 @@ public:
     DualstrusionVisualizer();
 
 protected:
-    void moveAbsoluteStep(const MoveAbsoluteStep*, Visual&);
-    void setToolheadStep(const SetToolheadStep*, Visual&);
+    void moveAbsoluteStep(const MoveAbsoluteStep*);
+    void setToolheadStep(const SetToolheadStep*);
 };
-
-QStringList visualizerList();
-QMap<QString, Visualizer*> visualizerMap();
 
 #endif // VISUALIZERS_H

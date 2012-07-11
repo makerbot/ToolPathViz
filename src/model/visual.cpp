@@ -1,24 +1,24 @@
 #include "visual.h"
 
-void Line::renderGL() const
+void GroupItem::add(VisualItem *item)
 {
-    glLineWidth(1);
-    glColor4f(color.redF(), color.greenF(), color.blueF(), color.alphaF());
-    glBegin(GL_LINES);
-    glVertex3d(from.x(), from.y(), from.z());
-    glVertex3d(to.x(), to.y(), to.z());
-    glEnd();
+    m_items.append(item);
 }
 
-void Visual::add(const VisualItem *item)
+void GroupItem::renderGL() const
 {
-    items.append(item);
-}
-
-void Visual::renderGL()
-{
-    foreach(const VisualItem *item, items)
+    foreach(VisualItem *item, m_items)
     {
         item->renderGL();
     }
+}
+
+void Line::renderGL() const
+{
+    glLineWidth(1);
+    glColor4f(m_color.redF(), m_color.greenF(), m_color.blueF(), m_color.alphaF());
+    glBegin(GL_LINES);
+    glVertex3d(m_from.x(), m_from.y(), m_from.z());
+    glVertex3d(m_to.x(), m_to.y(), m_to.z());
+    glEnd();
 }

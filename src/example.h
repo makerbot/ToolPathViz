@@ -3,6 +3,7 @@
 
 #include "view/toolpathscene.h"
 #include "load/visualizers.h"
+#include "load/controlledvisuals.h"
 
 /*!
   This is an example of how one might wrap the ToolpathScene in a QGraphicsView.
@@ -12,13 +13,17 @@
   */
 class ToolpathView : public QGraphicsView
 {
+    Q_OBJECT
 private:
     ToolpathScene *m_scene;
+
+    QGraphicsProxyWidget *m_overlay;
 
 public:
     ToolpathView(ToolpathScene *scene, QWidget *parent = 0) :
         QGraphicsView(scene, parent),
-        m_scene(scene)
+        m_scene(scene),
+        m_overlay(new QGraphicsProxyWidget())
     {
         QGLFormat glFormat(QGL::SampleBuffers | QGL::AlphaChannel);
         glFormat.setSwapInterval(1); // vsync
@@ -27,6 +32,8 @@ public:
 
         setViewport(glWidget);
         setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+
+        m_scene->addItem(m_overlay);
     }
 
 protected:
@@ -36,6 +43,25 @@ protected:
 
         if(scene()) {
             scene()->setSceneRect(QRect(QPoint(0, 0), event->size()));
+        }
+        if(m_overlay->widget()) {
+            m_overlay->resize(event->size());
+        }
+    }
+
+public slots:
+    void setOverlay(Visualizer* vis)
+    {
+        if(m_overlay->widget()) {
+            // unembed the widget
+            m_overlay->setWidget(0);
+        }
+
+        QWidget *overlay = vis->overlay();
+        if(overlay != 0)
+        {
+            m_overlay->setWidget(overlay);
+            m_overlay->resize(width(), height());
         }
     }
 };
@@ -56,6 +82,7 @@ public:
         // v Add visualizers to this map v
         m_visMap.insert("Example Visualizer", new ExampleVisualizer());
         m_visMap.insert("Dualstrusion Visualizer", new DualstrusionVisualizer());
+        m_visMap.insert("Layer Visualizer", new LayerVisualizer());
         // ^ Add visualizers to this map ^
 
         foreach(QString s, m_visMap.keys())
@@ -143,18 +170,21 @@ public:
         // let the user choose a visualizer
         connect(&m_vl, SIGNAL(visualizerSelected(Visualizer*)),
                 &m_ts, SLOT(setVisualizer(Visualizer*)));
+        connect(&m_vl, SIGNAL(visualizerSelected(Visualizer*)),
+                view,  SLOT(setOverlay(Visualizer*)));
 
         connect(openFileButton, SIGNAL(clicked()),
                 this, SLOT(open()));
     }
 
 public slots:
-    void open() {
+    void open()
+    {
         ToolpathOpenDialog fileDialog(this);
 
         // v Add parsers to this list v
-        fileDialog.addParser(new ExampleGCodeParser());
         fileDialog.addParser(new FullExampleGCodeParser());
+        fileDialog.addParser(new ExampleGCodeParser());
         // ^ Add parsers to this list ^
 
         // let the user choose a file
