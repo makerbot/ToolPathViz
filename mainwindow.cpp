@@ -306,7 +306,7 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
 
         Tomograph tomograph; 	// = ui->graphicsView->model.tomograph;
 		LayerLoops layerloops;
-        Regions regions; 		//  = ui->graphicsView->model.regions;
+        RegionList regions; 		//  = ui->graphicsView->model.regions;
         std::vector<mgl::SliceData> slices;
 		LayerPaths layerpaths;
 

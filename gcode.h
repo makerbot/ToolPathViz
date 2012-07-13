@@ -181,18 +181,18 @@ public:
     ~gcodeModel();
 
     void loadSliceData(const mgl::Tomograph &tomograph, 
-			const mgl::Regions &regions, 
+			const mgl::RegionList &regions, 
 			const std::vector<mgl::SliceData> &sliceData);
 	
 	void loadSliceData(const mgl::LayerLoops& layerloops, 
-			const mgl::Regions &regions, 
+			const mgl::RegionList &regions, 
 			const mgl::LayerPaths& layerpaths);
 
     void loadRegions(const mgl::Tomograph &tomograph, 
-			const mgl::Regions &regions);
+			const mgl::RegionList &regions);
 	
 	void loadRegions(const mgl::LayerLoops& layerloops, 
-			const mgl::Regions& regions);
+			const mgl::RegionList& regions);
 
     void loadGCode(QString filename);
 
