@@ -134,7 +134,7 @@ void layerMap::clear() {
 }
 
 gcodeModel::gcodeModel()
-: layerMeasure(0, 0) {
+: layerMeasure(0, 0, 1) {
 	toolEnabled = false;
 	viewSurfs = false;
 	viewRoofs = false;

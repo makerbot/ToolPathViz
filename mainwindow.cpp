@@ -316,7 +316,8 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
 		mesh.readStlFile(modelFile.c_str());
 		mesh.alignToPlate();
 
-		Segmenter segmenter(slicerCfg.firstLayerZ, slicerCfg.layerH);
+		Segmenter segmenter(slicerCfg.firstLayerZ, slicerCfg.layerH, 
+				slicerCfg.layerW);
 		segmenter.tablaturize(mesh);
 
         Slicer slicer(slicerCfg, &progress);
