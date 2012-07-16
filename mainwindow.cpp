@@ -290,17 +290,19 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
         loadGCoderConfigFromFile(config, gcoderCfg);
         SlicerConfig slicerCfg;
         loadSlicerConfigFromFile(config, slicerCfg);
+		RegionerConfig regionerCfg;
+		loadRegionerConfigFromFile(config, regionerCfg);
 		ExtruderConfig extruderCfg;
 		loadExtruderConfigFromFile(config, extruderCfg);
 
         int shells = ui->spinBoxShells->value();
 
         double density = atof(ui->lineEditDensity->text().toAscii());
-        slicerCfg.infillDensity = density;
+        regionerCfg.infillDensity = density;
 
-        slicerCfg.nbOfShells = shells;
-        cout << "Shells  " << slicerCfg.nbOfShells << endl;
-        cout << "Density " << slicerCfg.infillDensity << endl;
+        regionerCfg.nbOfShells = shells;
+        cout << "Shells  " << regionerCfg.nbOfShells << endl;
+        cout << "Density " << regionerCfg.infillDensity << endl;
 
         Progress progress(ui->label_task, ui->progressBar);
 
@@ -321,7 +323,7 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
 		slicer.generateLoops(segmenter, layerloops);
         cout << "Slicer done" << endl;
 
-        Regioner regioner(slicerCfg, &progress);
+        Regioner regioner(regionerCfg, &progress);
         regioner.generateSkeleton(layerloops, regions);
         cout << "Regioner done" << endl;
 
