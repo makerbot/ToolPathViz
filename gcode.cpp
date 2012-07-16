@@ -402,81 +402,68 @@ void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid,
 }
 
 void gcodeModel::loadRegions(const Tomograph &tomograph, 
-		const mgl::Regions &regions) {
+		const mgl::RegionList &regions) {
 	float xOff = 3 * tomograph.grid.getXValues()[0] + 
 			tomograph.grid.getXValues().back();
 	float yOff = 3 * tomograph.grid.getYValues()[0] + 
 			tomograph.grid.getYValues().back();
+	
+	//this should be changed to a layerMeasure index
+	int layerCount = 0;
+	for (RegionList::const_iterator i = regions.begin();
+		 i != regions.end(); i++) {
 
-	for (size_t i = 0; i < regions.roofings.size(); i++) {
-		const GridRanges &surface = regions.roofings[i];
-		float z = tomograph.layerMeasure.sliceIndexToHeight(i);
-		addPointsFromSurface(surface, tomograph.grid, z, 
-				roofing, 0, -yOff, points, map);
+		float z = tomograph.layerMeasure.sliceIndexToHeight(layerCount);
+
+		addPointsFromSurface(i->roofing, tomograph.grid, z, 
+							 roofing, 0, -yOff, points, map);
+
+		addPointsFromSurface(i->flooring, tomograph.grid, z, 
+							 flooring, 0, -yOff, points, map);
+
+		addPointsFromSurface(i->solid, tomograph.grid, z, 
+							 surface, 0, yOff, points, map);
+
+		addPointsFromSurface(i->flatSurface, tomograph.grid, z, 
+							 surface, xOff, 0, points, map);
+
+		layerCount++;
 	}
-
-	for (size_t i = 0; i < regions.floorings.size(); i++) {
-		const GridRanges &surface = regions.floorings[i];
-		float z = tomograph.layerMeasure.sliceIndexToHeight(i);
-		addPointsFromSurface(surface, tomograph.grid, z, 
-				flooring, 0, -yOff, points, map);
-	}
-
-	for (size_t i = 0; i < regions.solids.size(); i++) {
-		const GridRanges &solid = regions.solids[i];
-		float z = tomograph.layerMeasure.sliceIndexToHeight(i);
-		addPointsFromSurface(solid, tomograph.grid, z, 
-				surface, 0, yOff, points, map);
-	}
-
-	for (size_t i = 0; i < regions.flatSurfaces.size(); i++) {
-		const GridRanges &surf = regions.flatSurfaces[i];
-		float z = tomograph.layerMeasure.sliceIndexToHeight(i);
-		addPointsFromSurface(surf, tomograph.grid, z, 
-				surface, xOff, 0, points, map);
-	}
-
 }
 
 void gcodeModel::loadRegions(const LayerLoops& layerloops, 
-		const mgl::Regions &regions) {
+		const mgl::RegionList &regions) {
 	float xOff = 3 * layerloops.grid.getXValues()[0] + 
 			layerloops.grid.getXValues().back();
 	float yOff = 3 * layerloops.grid.getYValues()[0] + 
 			layerloops.grid.getYValues().back();
 
-	for (size_t i = 0; i < regions.roofings.size(); i++) {
-		const GridRanges &surface = regions.roofings[i];
-		float z = layerloops.layerMeasure.sliceIndexToHeight(i);
-		addPointsFromSurface(surface, layerloops.grid, z, 
-				roofing, 0, -yOff, points, map);
-	}
+	
+	//this should be changed to a layerMeasure index
+	int layerCount = 0;
+	for (RegionList::const_iterator i = regions.begin();
+		 i != regions.end(); i++) {
 
-	for (size_t i = 0; i < regions.floorings.size(); i++) {
-		const GridRanges &surface = regions.floorings[i];
-		float z = layerloops.layerMeasure.sliceIndexToHeight(i);
-		addPointsFromSurface(surface, layerloops.grid, z, 
+		float z = layerloops.layerMeasure.sliceIndexToHeight(layerCount);
+
+		addPointsFromSurface(i->roofing, layerloops.grid, z, 
+							 roofing, 0, -yOff, points, map);
+
+		addPointsFromSurface(i->flooring, layerloops.grid, z, 
 				flooring, 0, -yOff, points, map);
-	}
 
-	for (size_t i = 0; i < regions.solids.size(); i++) {
-		const GridRanges &solid = regions.solids[i];
-		float z = layerloops.layerMeasure.sliceIndexToHeight(i);
-		addPointsFromSurface(solid, layerloops.grid, z, 
+		addPointsFromSurface(i->solid, layerloops.grid, z, 
 				surface, 0, yOff, points, map);
-	}
 
-	for (size_t i = 0; i < regions.flatSurfaces.size(); i++) {
-		const GridRanges &surf = regions.flatSurfaces[i];
-		float z = layerloops.layerMeasure.sliceIndexToHeight(i);
-		addPointsFromSurface(surf, layerloops.grid, z, 
+		addPointsFromSurface(i->flatSurface, layerloops.grid, z, 
 				surface, xOff, 0, points, map);
-	}
 
+		layerCount++;
+	}
 }
 
 void gcodeModel::loadSliceData(const Tomograph& tomograph,
-		const mgl::Regions &regions,
+		const mgl::RegionList &regions,
 		const std::vector<mgl::SliceData> &slices) {
 
 	points.clear();
@@ -520,7 +507,7 @@ void gcodeModel::loadSliceData(const Tomograph& tomograph,
 }
 
 void gcodeModel::loadSliceData(const mgl::LayerLoops& layerloops, 
-		const mgl::Regions& regions, 
+		const mgl::RegionList& regions, 
 		const mgl::LayerPaths& layerpaths) {
 	points.clear();
 	map.clear();
