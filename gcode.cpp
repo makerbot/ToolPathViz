@@ -287,7 +287,7 @@ void addPointsFromPolygon(const mgl::Polygon &poly,
 		float feedrate, 
 		float flowrate, 
 		vector<point> &points,
-		layerMap& lmap) {
+		layerMap& /*lmap*/) {
 
 	for (unsigned int i = 0; i < poly.size(); i++) {
 		Vector2 p = poly[i];
@@ -352,7 +352,7 @@ void addPointsFromPath(const PATH& path,
 		Scalar feedrate, 
 		Scalar flowrate, 
 		vector<point>& points, 
-		layerMap& lmap) {
+		layerMap& /*lmap*/) {
 	typedef typename PATH::const_iterator const_iterator;
 	for(const_iterator iter = path.fromStart(); 
 			iter != path.end(); 

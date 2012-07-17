@@ -9,7 +9,7 @@
 
 using namespace std;
 
-static void qNormalizeAngle(int &angle) {
+void qNormalizeAngle(int &angle) {
 	while (angle < 0)
 		angle += 360 * 16;
 	while (angle > 360 * 16)
