@@ -134,7 +134,7 @@ void layerMap::clear() {
 }
 
 gcodeModel::gcodeModel()
-: layerMeasure(0, 0, 1) {
+: layerMeasure(0, 0) {
 	toolEnabled = false;
 	viewSurfs = false;
 	viewRoofs = false;
@@ -432,11 +432,10 @@ void gcodeModel::loadRegions(const Tomograph &tomograph,
 }
 
 void gcodeModel::loadRegions(const LayerLoops& layerloops, 
-		const mgl::RegionList &regions) {
-	float xOff = 3 * layerloops.grid.getXValues()[0] + 
-			layerloops.grid.getXValues().back();
-	float yOff = 3 * layerloops.grid.getYValues()[0] + 
-			layerloops.grid.getYValues().back();
+							 const mgl::RegionList &regions,
+							 const mgl::Grid &grid) {
+	float xOff = 3 * grid.getXValues()[0] + grid.getXValues().back();
+	float yOff = 3 * grid.getYValues()[0] + grid.getYValues().back();
 
 	
 	//this should be changed to a layerMeasure index
@@ -446,17 +445,17 @@ void gcodeModel::loadRegions(const LayerLoops& layerloops,
 
 		float z = layerloops.layerMeasure.sliceIndexToHeight(layerCount);
 
-		addPointsFromSurface(i->roofing, layerloops.grid, z, 
+		addPointsFromSurface(i->roofing, grid, z, 
 							 roofing, 0, -yOff, points, map);
 
-		addPointsFromSurface(i->flooring, layerloops.grid, z, 
-				flooring, 0, -yOff, points, map);
+		addPointsFromSurface(i->flooring, grid, z, 
+							 flooring, 0, -yOff, points, map);
 
-		addPointsFromSurface(i->solid, layerloops.grid, z, 
-				surface, 0, yOff, points, map);
+		addPointsFromSurface(i->solid, grid, z, 
+							 surface, 0, yOff, points, map);
 
-		addPointsFromSurface(i->flatSurface, layerloops.grid, z, 
-				surface, xOff, 0, points, map);
+		addPointsFromSurface(i->flatSurface, grid, z, 
+							 surface, xOff, 0, points, map);
 
 		layerCount++;
 	}
@@ -507,13 +506,14 @@ void gcodeModel::loadSliceData(const Tomograph& tomograph,
 }
 
 void gcodeModel::loadSliceData(const mgl::LayerLoops& layerloops, 
-		const mgl::RegionList& regions, 
-		const mgl::LayerPaths& layerpaths) {
+							   const mgl::RegionList& regions,
+							   const mgl::Grid& grid,
+							   const mgl::LayerPaths& layerpaths) {
 	points.clear();
 	map.clear();
 	map.recordHeight(0);
 	
-	loadRegions(layerloops, regions);
+	loadRegions(layerloops, regions, grid);
 	
 	float feedrate = 2400;
 	float flowrate = 4;

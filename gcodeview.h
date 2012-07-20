@@ -23,8 +23,9 @@ public:
 			const  mgl::RegionList &regions, 
 			const std::vector<mgl::SliceData> &sliceData);
 	void loadSliceData(const mgl::LayerLoops& layerloops, 
-			const mgl::RegionList& regions,
-			const mgl::LayerPaths& layerpaths);
+					   const mgl::RegionList& regions,
+					   const mgl::Grid& grid,
+					   const mgl::LayerPaths& layerpaths);
 
     void loadModel(QString filename);
     void exportModel (QString filename, void *progress);

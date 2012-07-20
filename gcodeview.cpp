@@ -224,16 +224,17 @@ void GcodeView::paintGLgcode() {
 }
 
 void GcodeView::loadSliceData(const mgl::Tomograph &tomograph, 
-		const mgl::RegionList &regions, 
+							  const mgl::RegionList &regions,
 		const std::vector<mgl::SliceData>&sliceData) {
 	model.loadSliceData(tomograph, regions, sliceData);
 	resetView();
 	updateGL();
 }
 void GcodeView::loadSliceData(const mgl::LayerLoops& layerloops, 
-		const mgl::RegionList& regions, 
-		const mgl::LayerPaths& layerpaths) {
-	model.loadSliceData(layerloops, regions, layerpaths);
+							  const mgl::RegionList& regions,
+							  const mgl::Grid &grid,
+							  const mgl::LayerPaths& layerpaths) {
+	model.loadSliceData(layerloops, regions, grid, layerpaths);
 	resetView();
 	updateGL();
 }

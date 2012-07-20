@@ -316,8 +316,11 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
 		mesh.readStlFile(modelFile.c_str());
 		mesh.alignToPlate();
 
-		Segmenter segmenter(slicerCfg.firstLayerZ, slicerCfg.layerH, 
-				slicerCfg.layerW);
+		Limits limits = mesh.readLimits();
+		Grid grid;
+
+		Segmenter segmenter(slicerCfg.firstLayerZ, slicerCfg.layerH);
+
 		segmenter.tablaturize(mesh);
 
         Slicer slicer(slicerCfg, &progress);
@@ -325,14 +328,16 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
         cout << "Slicer done" << endl;
 
         Regioner regioner(regionerCfg, &progress);
-        regioner.generateSkeleton(layerloops, regions);
+        regioner.generateSkeleton(layerloops, layerloops.layerMeasure, regions,
+								  limits, grid);
         cout << "Regioner done" << endl;
 
         Pather pather(&progress);
-        pather.generatePaths(extruderCfg, layerloops, regions, layerpaths);
+        pather.generatePaths(extruderCfg, regions,
+							 layerloops.layerMeasure, grid, layerpaths);
         cout << "Pather done" << endl;
 
-        ui->graphicsView->loadSliceData(layerloops, regions, layerpaths);
+        ui->graphicsView->loadSliceData(layerloops, regions, grid, layerpaths);
         ui->LayerHeight->setMaximum(ui->graphicsView->model.getMapSize());
         ui->LayerMin->setMaximum(ui->graphicsView->model.getMapSize());
         ui->LayerMin->setValue(0);
