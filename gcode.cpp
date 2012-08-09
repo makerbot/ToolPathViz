@@ -1,4 +1,5 @@
 #include "gcode.h"
+#include "unit_tests/PatherOptimizerTestCase.h"
 #include <cmath>
 #include <float.h>
 #include <QFile>
@@ -55,7 +56,7 @@ void gcode::parseCodes() {
 					command.find_first_of(codes[codeIndex]) + 1).c_str());
 
 			//cout << " code=" << codes[codeIndex] << 
-					//" value=" << value << std::endl;
+			//" value=" << value << std::endl;
 			parameters.push_back(gCodeParameter(codes[codeIndex], value));
 		}
 		codeIndex++;
@@ -148,7 +149,7 @@ gcodeModel::~gcodeModel() {
 }
 
 float gcodeModel::getModelZCenter() {
-	return (zHeightBounds.getMax() - zHeightBounds.getMin()) / 2 + 
+	return (zHeightBounds.getMax() - zHeightBounds.getMin()) / 2 +
 			zHeightBounds.getMin();
 }
 
@@ -245,7 +246,7 @@ void gcodeModel::loadGcodeLine(const char* lineStr) {
 		} else {
 			// TODO
 		}
-	}		// If the code contains a movement
+	}// If the code contains a movement
 	else if (code.hasCode('G') && (int) code.getCodeValue('G') == 1) {
 		// Pull coordinates out of it. This is not to spec 
 		// (i think any time these are present, they mean go here)
@@ -282,25 +283,25 @@ void addPointsFromPolygon(const mgl::Polygon &poly,
 		float xOff,
 		float yOff,
 		float z,
-		PointKind kind, 
-		int nb, 
-		float feedrate, 
-		float flowrate, 
+		PointKind kind,
+		int nb,
+		float feedrate,
+		float flowrate,
 		vector<point> &points,
 		layerMap& /*lmap*/) {
 
 	for (unsigned int i = 0; i < poly.size(); i++) {
 		Vector2 p = poly[i];
-		points.push_back(point(kind, nb, p[0] + xOff, 
+		points.push_back(point(kind, nb, p[0] + xOff,
 				p[1] + yOff, z, feedrate, flowrate));
 
 	}
 }
 
-void addPointsFromPolygons(const Polygons& polys, 
-		float xOff, float yOff, float z, 
-		PointKind kind, PointKind interPointKind, 
-		int nb, float feedrate, float flowrate, 
+void addPointsFromPolygons(const Polygons& polys,
+		float xOff, float yOff, float z,
+		PointKind kind, PointKind interPointKind,
+		int nb, float feedrate, float flowrate,
 		vector<point> &points, layerMap& map) {
 	map.recordHeight(z);
 	for (unsigned int i = 0; i < polys.size(); i++) {
@@ -309,62 +310,74 @@ void addPointsFromPolygons(const Polygons& polys,
 		// move to
 		const Vector2 p = poly[0];
 
-		points.push_back(point(interPointKind, 0, 
+		points.push_back(point(interPointKind, 0,
 				xOff + p[0], yOff + p[1], z, feedrate, flowrate));
 		// polygon
-		addPointsFromPolygon(poly, xOff, 
+		addPointsFromPolygon(poly, xOff,
 				yOff, z, kind, nb, feedrate, flowrate, points, map);
 	}
 }
 
+template <typename PATH>
+void addPointsFromOnePath(const PATH& path,
+		Scalar xOff, Scalar yOff, Scalar z,
+		PointKind kind, PointKind interPointKind,
+		int nb, Scalar feedrate, Scalar flowrate,
+		vector<point>& points, layerMap& map) {
+	if (!path.empty()) {
+		PointType nPoint = *path.fromStart();
+		points.push_back(point(
+				interPointKind, 0,
+				xOff + nPoint.x,
+				yOff + nPoint.y,
+				z, feedrate, flowrate));
+		addPointsFromPath(path, xOff, yOff, z,
+				kind, nb, feedrate, flowrate, points, map);
+	}
+}
+
 template <typename PATHLIST>
-void addPointsFromPaths(const PATHLIST& paths, 
-		Scalar xOff, Scalar yOff, Scalar z, 
-		PointKind kind, PointKind interPointKind, 
-		int nb, Scalar feedrate, Scalar flowrate, 
+void addPointsFromPaths(const PATHLIST& paths,
+		Scalar xOff, Scalar yOff, Scalar z,
+		PointKind kind, PointKind interPointKind,
+		int nb, Scalar feedrate, Scalar flowrate,
 		vector<point>& points, layerMap& map) {
 	typedef typename PATHLIST::const_iterator const_iterator;
 	typedef typename PATHLIST::value_type PATH;
-	for(const_iterator iter = paths.begin(); 
-			iter != paths.end(); 
+	for (const_iterator iter = paths.begin();
+			iter != paths.end();
 			++iter) {
 		const PATH& currentPath = *iter;
-		if(!currentPath.empty()) {
-			PointType nPoint = *currentPath.fromStart();
-			points.push_back(point(
-					interPointKind, 0, 
-					xOff + nPoint.x, 
-					yOff + nPoint.y, 
-					z, feedrate, flowrate));
-			addPointsFromPath(currentPath, xOff, yOff, z, 
-					kind, nb, feedrate, flowrate, points, map);
-		}
+		addPointsFromOnePath(currentPath, xOff, yOff, z,
+				kind, interPointKind,
+				nb, feedrate, flowrate,
+				points, map);
 	}
 }
 
 template <typename PATH>
-void addPointsFromPath(const PATH& path, 
-		Scalar xOff, 
-		Scalar yOff, 
-		Scalar z, 
-		PointKind kind, 
-		int nb, 
-		Scalar feedrate, 
-		Scalar flowrate, 
-		vector<point>& points, 
+void addPointsFromPath(const PATH& path,
+		Scalar xOff,
+		Scalar yOff,
+		Scalar z,
+		PointKind kind,
+		int nb,
+		Scalar feedrate,
+		Scalar flowrate,
+		vector<point>& points,
 		layerMap& /*lmap*/) {
 	typedef typename PATH::const_iterator const_iterator;
-	for(const_iterator iter = path.fromStart(); 
-			iter != path.end(); 
+	for (const_iterator iter = path.fromStart();
+			iter != path.end();
 			++iter) {
 		PointType currentPoint = *iter;
-		points.push_back(point(kind, nb, xOff + currentPoint.x, 
+		points.push_back(point(kind, nb, xOff + currentPoint.x,
 				yOff + currentPoint.y, z, feedrate, flowrate));
 	}
 }
 
-void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid, 
-		float z, PointKind kind, float xOff, float yOff, 
+void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid,
+		float z, PointKind kind, float xOff, float yOff,
 		vector<point> &points, layerMap& map) {
 	float feedrate = 10;
 	float flowrate = 5;
@@ -376,11 +389,11 @@ void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid,
 		const std::vector<ScalarRange> &line = gridRanges.xRays[i];
 		for (size_t j = 0; j < line.size(); j++) {
 			const ScalarRange &range = line[j];
-			points.push_back(point(invisible, 0, 
+			points.push_back(point(invisible, 0,
 					xOff + range.min, yOff + y, z, 0, 0));
-			points.push_back(point(kind, 0, 
+			points.push_back(point(kind, 0,
 					xOff + range.min, yOff + y, z, feedrate, flowrate));
-			points.push_back(point(kind, 0, 
+			points.push_back(point(kind, 0,
 					xOff + range.max, yOff + y, z, feedrate, flowrate));
 		}
 	}
@@ -390,9 +403,9 @@ void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid,
 		const std::vector<ScalarRange> &line = gridRanges.yRays[i];
 		for (size_t j = 0; j < line.size(); j++) {
 			const ScalarRange &range = line[j];
-			points.push_back(point(invisible, 0, 
+			points.push_back(point(invisible, 0,
 					xOff + x, yOff + range.min, z, 0, 0));
-			points.push_back(point(kind, 1, 
+			points.push_back(point(kind, 1,
 					xOff + x, yOff + range.min, z, feedrate, flowrate));
 			points.push_back(point(kind, 1,
 					xOff + x, yOff + range.max, z, feedrate, flowrate));
@@ -401,61 +414,61 @@ void addPointsFromSurface(const GridRanges& gridRanges, const Grid & grid,
 	}
 }
 
-void gcodeModel::loadRegions(const Tomograph &tomograph, 
+void gcodeModel::loadRegions(const Tomograph &tomograph,
 		const mgl::RegionList &regions) {
-	float xOff = 3 * tomograph.grid.getXValues()[0] + 
+	float xOff = 3 * tomograph.grid.getXValues()[0] +
 			tomograph.grid.getXValues().back();
-	float yOff = 3 * tomograph.grid.getYValues()[0] + 
+	float yOff = 3 * tomograph.grid.getYValues()[0] +
 			tomograph.grid.getYValues().back();
-	
+
 	//this should be changed to a layerMeasure index
 	int layerCount = 0;
 	for (RegionList::const_iterator i = regions.begin();
-		 i != regions.end(); i++) {
+			i != regions.end(); i++) {
 
 		float z = tomograph.layerMeasure.sliceIndexToHeight(layerCount);
 
-		addPointsFromSurface(i->roofing, tomograph.grid, z, 
-							 roofing, 0, -yOff, points, map);
+		addPointsFromSurface(i->roofing, tomograph.grid, z,
+				roofing, 0, -yOff, points, map);
 
-		addPointsFromSurface(i->flooring, tomograph.grid, z, 
-							 flooring, 0, -yOff, points, map);
+		addPointsFromSurface(i->flooring, tomograph.grid, z,
+				flooring, 0, -yOff, points, map);
 
-		addPointsFromSurface(i->solid, tomograph.grid, z, 
-							 surface, 0, yOff, points, map);
+		addPointsFromSurface(i->solid, tomograph.grid, z,
+				surface, 0, yOff, points, map);
 
-		addPointsFromSurface(i->flatSurface, tomograph.grid, z, 
-							 surface, xOff, 0, points, map);
+		addPointsFromSurface(i->flatSurface, tomograph.grid, z,
+				surface, xOff, 0, points, map);
 
 		layerCount++;
 	}
 }
 
-void gcodeModel::loadRegions(const LayerLoops& layerloops, 
-							 const mgl::RegionList &regions,
-							 const mgl::Grid &grid) {
+void gcodeModel::loadRegions(const LayerLoops& layerloops,
+		const mgl::RegionList &regions,
+		const mgl::Grid &grid) {
 	float xOff = 3 * grid.getXValues()[0] + grid.getXValues().back();
 	float yOff = 3 * grid.getYValues()[0] + grid.getYValues().back();
 
-	
+
 	//this should be changed to a layerMeasure index
 	int layerCount = 0;
 	for (RegionList::const_iterator i = regions.begin();
-		 i != regions.end(); i++) {
+			i != regions.end(); i++) {
 
 		float z = layerloops.layerMeasure.sliceIndexToHeight(layerCount);
 
-		addPointsFromSurface(i->roofing, grid, z, 
-							 roofing, 0, -yOff, points, map);
+		addPointsFromSurface(i->roofing, grid, z,
+				roofing, 0, -yOff, points, map);
 
-		addPointsFromSurface(i->flooring, grid, z, 
-							 flooring, 0, -yOff, points, map);
+		addPointsFromSurface(i->flooring, grid, z,
+				flooring, 0, -yOff, points, map);
 
-		addPointsFromSurface(i->solid, grid, z, 
-							 surface, 0, yOff, points, map);
+		addPointsFromSurface(i->solid, grid, z,
+				surface, 0, yOff, points, map);
 
-		addPointsFromSurface(i->flatSurface, grid, z, 
-							 surface, xOff, 0, points, map);
+		addPointsFromSurface(i->flatSurface, grid, z,
+				surface, xOff, 0, points, map);
 
 		layerCount++;
 	}
@@ -480,8 +493,8 @@ void gcodeModel::loadSliceData(const Tomograph& tomograph,
 
 	for (unsigned int i = 0; i < slices.size(); i++) {
 		const SliceData &sliceData = slices[i];
-		for (unsigned int extruderId = 0; 
-				extruderId < sliceData.extruderSlices.size(); 
+		for (unsigned int extruderId = 0;
+				extruderId < sliceData.extruderSlices.size();
 				extruderId++) {
 			const ExtruderSlice &slice = sliceData.extruderSlices[extruderId];
 			float z = (float) sliceData.getZHeight();
@@ -491,67 +504,85 @@ void gcodeModel::loadSliceData(const Tomograph& tomograph,
 			const Polygons &infills = slice.infills;
 
 			// main view
-			addPointsFromPolygons(boundaries, 0, 0, z, 
+			addPointsFromPolygons(boundaries, 0, 0, z,
 					perimeter, travel, 0, feedrate, flowrate, points, map);
-			addPointsFromPolygons(infills, 0, 0, z, 
+			addPointsFromPolygons(infills, 0, 0, z,
 					infill, travel, 0, feedrate, flowrate, points, map);
 
 			for (unsigned int j = 0; j < slice.insetLoopsList.size(); j++) {
 				const Polygons& insetLoops = slice.insetLoopsList[j];
-				addPointsFromPolygons(insetLoops, 0, 0, z, 
+				addPointsFromPolygons(insetLoops, 0, 0, z,
 						shell, travel, j, feedrate, flowrate, points, map);
 			}
 		}
 	}
 }
 
-void gcodeModel::loadSliceData(const mgl::LayerLoops& layerloops, 
-							   const mgl::RegionList& regions,
-							   const mgl::Grid& grid,
-							   const mgl::LayerPaths& layerpaths) {
+void gcodeModel::loadSliceData(const mgl::LayerLoops& layerloops,
+		const mgl::RegionList& regions,
+		const mgl::Grid& grid,
+		const mgl::LayerPaths& layerpaths) {
 	points.clear();
 	map.clear();
 	map.recordHeight(0);
-	
+
 	loadRegions(layerloops, regions, grid);
-	
+
 	float feedrate = 2400;
 	float flowrate = 4;
 	feedrateBounds.evaluate(feedrate);
 	flowrateBounds.evaluate(flowrate);
-	
+
 	size_t sliceIndex = 0;
-	
-	for(LayerPaths::const_layer_iterator layerIter = layerpaths.begin(); 
-			layerIter != layerpaths.end(); 
+
+	for (LayerPaths::const_layer_iterator layerIter = layerpaths.begin();
+			layerIter != layerpaths.end();
 			++layerIter) {
 		const LayerPaths::Layer& currentLayer = *layerIter;
 		Scalar z = currentLayer.layerZ;
-		for(LayerPaths::Layer::const_extruder_iterator extruderIter = 
-				currentLayer.extruders.begin(); 
-				extruderIter != currentLayer.extruders.end(); 
+		for (LayerPaths::Layer::const_extruder_iterator extruderIter =
+				currentLayer.extruders.begin();
+				extruderIter != currentLayer.extruders.end();
 				++extruderIter) {
-			const LayerPaths::Layer::ExtruderLayer::InfillList& infills = 
+			const LayerPaths::Layer::ExtruderLayer::InfillList& infills =
 					extruderIter->infillPaths;
-			const LayerPaths::Layer::ExtruderLayer::OutlineList& outlines = 
+			const LayerPaths::Layer::ExtruderLayer::OutlineList& outlines =
 					extruderIter->outlinePaths;
-			const LayerPaths::Layer::ExtruderLayer::InsetList& insets = 
+			const LayerPaths::Layer::ExtruderLayer::InsetList& insets =
 					extruderIter->insetPaths;
-			 addPointsFromPaths(outlines, 0, 0, z, 
+			const LayerPaths::Layer::ExtruderLayer::LabeledPathList& paths =
+					extruderIter->paths;
+			addPointsFromPaths(outlines, 0, 0, z,
 					perimeter, travel, 0, feedrate, flowrate, points, map);
-			 addPointsFromPaths(infills, 0, 0, z, 
+			addPointsFromPaths(infills, 0, 0, z,
 					infill, travel, 0, feedrate, flowrate, points, map);
 			size_t insetIndex = 0;
-			for(LayerPaths::Layer::ExtruderLayer::const_inset_iterator insetIter = 
-					insets.begin(); 
-					insetIter != insets.end(); 
+			for (LayerPaths::Layer::ExtruderLayer::const_inset_iterator insetIter =
+					insets.begin();
+					insetIter != insets.end();
 					++insetIter) {
-				 addPointsFromPaths(*insetIter, 0.0, 0.0, z, 
-						shell, travel, insetIndex, feedrate, flowrate, 
+				addPointsFromPaths(*insetIter, 0.0, 0.0, z,
+						shell, travel, insetIndex, feedrate, flowrate,
 						points, map);
 				++insetIndex;
 			}
-			
+			for(LayerPaths::Layer::ExtruderLayer::LabeledPathList::const_iterator 
+					iter = paths.begin(); 
+					iter != paths.end(); 
+					++iter) {
+				const LabeledOpenPath& currentPath = *iter;
+				PointKind kind = unknown;
+				if(currentPath.myLabel.isInset())
+					kind = shell;
+				else if(currentPath.myLabel.isInfill())
+					kind = infill;
+				else if(currentPath.myLabel.isOutline())
+					kind = perimeter;
+				addPointsFromOnePath(currentPath.myPath, 0, 0, z, 
+						kind, travel, currentPath.myLabel.myValue-10, 
+						feedrate, flowrate, points, map);
+			}
+
 		}
 		++sliceIndex;
 	}
@@ -564,9 +595,9 @@ void gcodeModel::loadGCode(QString q) {
 	cout << "loadGCode: " << filename << endl;
 	if (filename.size() == 0) return;
 
-	string extension = filename.substr(filename.find_last_of('.'), 
+	string extension = filename.substr(filename.find_last_of('.'),
 			filename.size());
-	std::transform(extension.begin(), extension.end(), 
+	std::transform(extension.begin(), extension.end(),
 			extension.begin(), ::tolower);
 	cout << "extension " << extension << endl;
 
