@@ -292,6 +292,8 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
         loadSlicerConfigFromFile(config, slicerCfg);
 		RegionerConfig regionerCfg;
 		loadRegionerConfigFromFile(config, regionerCfg);
+		PatherConfig patherCfg;
+		loadPatherConfigFromFile(config, patherCfg);
 		ExtruderConfig extruderCfg;
 		loadExtruderConfigFromFile(config, extruderCfg);
 
@@ -332,7 +334,7 @@ void MainWindow::sliceModelAndCreateToolPaths(const char* modelpath)
 								  limits, grid);
         cout << "Regioner done" << endl;
 
-        Pather pather(&progress);
+        Pather pather(patherCfg, &progress);
         pather.generatePaths(extruderCfg, regions,
 							 layerloops.layerMeasure, grid, layerpaths);
         cout << "Pather done" << endl;
