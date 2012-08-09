@@ -1,5 +1,4 @@
 #include "gcode.h"
-#include "unit_tests/PatherOptimizerTestCase.h"
 #include <cmath>
 #include <float.h>
 #include <QFile>
